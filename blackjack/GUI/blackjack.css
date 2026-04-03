@@ -1,19 +1,16 @@
 body {
-        background-image: url("../images/background.jpg");
-        background-repeat: repeat;
-        background-size: 512px;
+        background-color: #202d28;
+        color: white;
+        font-family: Arial, Helvetica, sans-serif;
         margin: 0;
 }
 
 /*MESSAGE*/
 #message {
     font-size: 28px;
-    font-weight: bold;
-    color: white;
     text-align: center;
-    margin: 15px 0;
-    font-family: Arial, Helvetica, sans-serif;
-    box-shadow: 10px 10px rgba(0, 0, 0, 0.2);
+    margin: 10px 0;
+    padding: 20px;
 }
 
 /*TABLE*/
@@ -43,12 +40,8 @@ body {
 /*TEXT*/
 #leftSide p, #rightSide p {
     font-size: 26px;
-    font-weight: bold;
     text-align: center;
     margin: 10px 0;
-    color: white;
-    font-family: Arial, Helvetica, sans-serif;
-    text-shadow: 0 0 8px rgba(255,255,255,0.3);
 }
 
 /*HAND*/
@@ -83,18 +76,19 @@ body {
     justify-content: center;
     gap: 15px;
     position: fixed;
-    bottom: 20px;
+    bottom: 0px;
+    padding: 20px;
+    background-color: black;
     left: 0;
     right: 0;
 }
 
 #buttonContainer button {
-    background:  #FFD700;
-    color: #000;
+    background:  #a22d2d;
+    border: 0px;
     border-radius: 10px;
     padding: 12px 25px;
     font-size: 18px;
-    font-weight: bold;
     cursor: pointer;
 }
 
