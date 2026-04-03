@@ -29,6 +29,18 @@ export class Game {
         return this.dealer.hand;
     }
 
+    get chipsCount(){
+        return this.player.chips;
+    }
+
+    get playerHandValue(){
+        return this.player.handValue;
+    }
+
+    get dealerHandValue(){
+        return this.dealer.handValue;
+    }
+
     startRound(){
         this.initRound();
         this.player.takeBet( gameConfig.fixBet );

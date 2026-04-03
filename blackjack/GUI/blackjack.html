@@ -10,73 +10,114 @@
     </script>
 
     <style>
+
         body {
-            background-image: url( "../images/background.jpg" );
+            background-image: url("../images/background.jpg");
             background-repeat: repeat;
             background-size: 512px;
+            margin: 0;
         }
 
+        /* ===== MESSAGE ===== */
+        #message {
+            font-size: 28px;
+            font-weight: bold;
+            color: white;
+            text-align: center;
+            margin: 15px 0;
+            font-family: Arial, Helvetica, sans-serif;
+        }
+
+        /* ===== TABLE ===== */
         #tableContainer {
             display: flex;
             justify-content: space-around;
             align-items: flex-start;
-            gap: 20px;
+            gap: 40px;
+            padding: 20px;
         }
 
+        /* ===== PLAYER / DEALER PANEL ===== */
+        #leftSide, #rightSide {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 350px;          /* fix magasság */
+            width: 650px;
+            padding: 15px 25px;
+            border-radius: 15px;
+            background: rgba(0, 0, 0, 0.4);
+            backdrop-filter: blur(6px);
+            box-shadow: 0 0 20px rgba(0,0,0,0.6);
+        }
+
+        /* ===== TEXT ===== */
+        #leftSide p, #rightSide p {
+            font-size: 26px;
+            font-weight: bold;
+            text-align: center;
+            margin: 10px 0;
+            color: white;
+            font-family: Arial, Helvetica, sans-serif;
+            text-shadow: 0 0 8px rgba(255,255,255,0.3);
+        }
+
+        /* ===== HAND ===== */
         .handContainer {
-            width: 600px;   /* tetszőleges szélesség */
-            height: 300px;  /* tetszőleges magasság */
+            width: 100%;
+            min-height: 180px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-wrap: nowrap;
+            overflow-x: auto;
         }
 
+        /* ===== CARDS ===== */
         .handContainer > img {
-            width: 30%;
+            width: 120px;
+            height: auto;
+            margin-left: -60px;
+            border-radius: 10px;
+            box-shadow: 0 6px 12px rgba(0,0,0,0.6);
+            transition: transform 0.25s ease, box-shadow 0.25s ease;
+            position: relative;
         }
 
-        #buttonContainer {
-            display: flex;                 /* egymás mellé rendezi a gombokat */
-            justify-content: center;       /* vízszintesen középre */
-            gap: 10px;                     /* gombok közötti távolság */
-            position: fixed;               /* mindig a képernyő alján marad */
-            bottom: 20px;                  /* távolság az oldal aljától */
-            left: 0;
-            right: 0;
+        .handContainer > img:first-child {
+            margin-left: 0;
         }
+
+        /* ===== BUTTONS ===== */
         #buttonContainer {
             display: flex;
             justify-content: center;
-            gap: 15px;             /* távolság a gombok között */
-            position: fixed;        /* mindig a képernyő alján */
+            gap: 15px;
+            position: fixed;
             bottom: 20px;
             left: 0;
             right: 0;
-            z-index: 10;            /* a játékos kéz fölé */
-       }
+        }
 
-        /* Gomb stílus */
         #buttonContainer button {
-            background-color: #FFD700;   /* arany/sárga */
-            color: #000;                 /* fekete szöveg */
-            border: 2px solid #B8860B;  /* sötétebb arany keret */
-            border-radius: 8px;          /* lekerekített sarkok */
-            padding: 10px 20px;          /* belső margó */
-            font-size: 16px;
+            background:  #FFD700;
+            color: #000;
+            border-radius: 10px;
+            padding: 12px 25px;
+            font-size: 18px;
             font-weight: bold;
             cursor: pointer;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.3);  /* enyhe árnyék a 3D hatásért */
-            transition: all 0.2s ease;   /* sima animáció hover-re */
         }
 
-        /* Hover effekt */
+        /* hover */
         #buttonContainer button:hover {
-            background-color: #FFC300;  /* világosabb sárga */
-            transform: translateY(-2px); /* kis emelkedés */
-            box-shadow: 0 6px 8px rgba(0,0,0,0.4);
+            background:  #ff6073;
         }
 
-        /* Aktív gomb (lenyomott állapot) */
+        /* active */
         #buttonContainer button:active {
-            transform: translateY(1px);
-            box-shadow: 0 2px 4px rgba(0,0,0,0.3);
+            background:  #ff6073;
         }
     </style>
 
@@ -87,30 +128,26 @@
 
         <div id="leftSide">
             <div class="handContainer" id="playerHandContainer"></div>
+            <p>
+                <span>Player:</span>
+                <span id="playerHandValue"></span>
+                <span> | </span>
+                <span>Chips: </span>
+                <span id="chipsCount"></span>
+            </p>
         </div>
 
         <div id="rightSide">
             <div class="handContainer" id="dealerHandContainer"></div>
+            <p>
+                <span>Dealer:</span>
+                <span id="dealerHandValue"></span>
+            </p>
         </div>
 
     </div>
 
-    <p>
-    <span>Zsetonok száma (1 zseton 10$) </span>
-    <span id="chipsCount"></span>
-    </p>
-
      <p id="message"></p>
-
-    <p>
-    <span>Kezünkben lévő lapok értéke:</span>
-    <span id="playerHandValue"></span>
-    </p>
-
-    <p>
-    <span>Osztó kezében lévő lapok értéke:</span>
-    <span id="dealerHandValue"></span>
-    </p>
 
     <div id="buttonContainer">
         <button id="hitBtn">Hit</button>
