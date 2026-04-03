@@ -1,0 +1,9 @@
+{
+    "aceValue" : 11,
+    "reducedAceValue" : 1,
+    "blackjack" : 21,
+    "dealerStandValue" : 17,
+    "playerStandValue" : 1,
+    "fixBet" : 1,
+    "playerChips" : 10
+}

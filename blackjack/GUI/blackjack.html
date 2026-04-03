@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="hu">
+<head>
+
+    <meta charset="UTF-8">
+    <title>Black Jack Game</title>
+
+    <script type="module">
+        import {  } from './GUI.js';
+    </script>
+
+    <style>
+        body {
+            background-image: url( "../images/background.jpg" );
+            background-repeat: repeat;
+            background-size: 512px;
+        }
+
+        #tableContainer {
+            display: flex;
+            justify-content: space-around;
+            align-items: flex-start;
+            gap: 20px;
+        }
+
+        .handContainer {
+            width: 600px;   /* tetszőleges szélesség */
+            height: 300px;  /* tetszőleges magasság */
+        }
+
+        .handContainer > img {
+            width: 30%;
+        }
+
+        #buttonContainer {
+            display: flex;                 /* egymás mellé rendezi a gombokat */
+            justify-content: center;       /* vízszintesen középre */
+            gap: 10px;                     /* gombok közötti távolság */
+            position: fixed;               /* mindig a képernyő alján marad */
+            bottom: 20px;                  /* távolság az oldal aljától */
+            left: 0;
+            right: 0;
+        }
+        #buttonContainer {
+            display: flex;
+            justify-content: center;
+            gap: 15px;             /* távolság a gombok között */
+            position: fixed;        /* mindig a képernyő alján */
+            bottom: 20px;
+            left: 0;
+            right: 0;
+            z-index: 10;            /* a játékos kéz fölé */
+       }
+
+        /* Gomb stílus */
+        #buttonContainer button {
+            background-color: #FFD700;   /* arany/sárga */
+            color: #000;                 /* fekete szöveg */
+            border: 2px solid #B8860B;  /* sötétebb arany keret */
+            border-radius: 8px;          /* lekerekített sarkok */
+            padding: 10px 20px;          /* belső margó */
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.3);  /* enyhe árnyék a 3D hatásért */
+            transition: all 0.2s ease;   /* sima animáció hover-re */
+        }
+
+        /* Hover effekt */
+        #buttonContainer button:hover {
+            background-color: #FFC300;  /* világosabb sárga */
+            transform: translateY(-2px); /* kis emelkedés */
+            box-shadow: 0 6px 8px rgba(0,0,0,0.4);
+        }
+
+        /* Aktív gomb (lenyomott állapot) */
+        #buttonContainer button:active {
+            transform: translateY(1px);
+            box-shadow: 0 2px 4px rgba(0,0,0,0.3);
+        }
+    </style>
+
+</head>
+<body>
+
+    <div id="tableContainer">
+
+        <div id="leftSide">
+            <div class="handContainer" id="playerHandContainer"></div>
+        </div>
+
+        <div id="rightSide">
+            <div class="handContainer" id="dealerHandContainer"></div>
+        </div>
+
+    </div>
+
+    <p>
+    <span>Zsetonok száma (1 zseton 10$) </span>
+    <span id="chipsCount"></span>
+    </p>
+
+     <p id="message"></p>
+
+    <p>
+    <span>Kezünkben lévő lapok értéke:</span>
+    <span id="playerHandValue"></span>
+    </p>
+
+    <p>
+    <span>Osztó kezében lévő lapok értéke:</span>
+    <span id="dealerHandValue"></span>
+    </p>
+
+    <div id="buttonContainer">
+        <button id="hitBtn">Hit</button>
+        <button id="standBtn">Stand</button>
+        <button id="startBtn">Start Round</button>
+    </div>
+
+</body>
+</html>
