@@ -18,7 +18,7 @@ export class ViewController{
         return cardImage;
     }
     
-    displayCard( who, cards ){
+    async displayCard( who, cards ){
         const handElement = document.getElementById( `${who}HandContainer` );
         const cardList = Array.isArray(cards) ? cards : [cards];
         for (const card of cardList) {

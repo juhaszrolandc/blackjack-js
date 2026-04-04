@@ -1,7 +1,8 @@
 import { BlackjackPlayer } from './blackjackPlayer.js';
 import { Deck } from '../../base/Deck.js';
-import { deckConfig } from '../config/deckConfig.js';
+
 const gameConfig = await fetch( '../config/gameConfig.json' ).then( res => res.json() );
+const deckConfig = await fetch( '../config/deckConfig.json' ).then( res => res.json() );
 
 export class Game {
 
