@@ -6,48 +6,48 @@ export class GameController {
     }
 
     start(){
-        this.view.messageHidden();
-
         if( this.game.isRoundInProgress ){
             this.view.displayMessage( "Már elindítottad a játékot, le kell játszanod egy kört!" , "orange" );
             return;
         }
 
+        // Letakarítsuk az előző round maradványait.
+        this.view.messageHidden();
         this.view.removeCards( "player" );
         this.view.removeCards( "dealer" );
-
+        
         try {
             this.game.startRound();
         } catch {
             this.view.displayMessage( "Játék indítása sikertelen! Elfogytak a zsetonok?", "red" );
         }
 
+        // A round elején a dealer és a player is kap egy-egy kártyát.
         this.view.displayCard( "player", this.game.lastPlayerCard );
         this.view.displayCard( "dealer", this.game.lastDealerCard );
         this.view.displayState( this.game.chipsCount, this.game.playerHandValue, this.game.dealerHandValue );
     }
 
     hit(){
-        this.view.messageHidden();
-
         if( !this.game.isRoundInProgress ){
             this.view.displayMessage( "Új kört kell indítanod, kattints a Start Round gombra!" , "orange" );
             return;
         }
 
+        this.view.messageHidden();
         this.game.takeHit();
         this.view.displayCard( "player", this.game.lastPlayerCard );
         this.view.displayState( this.game.chipsCount, this.game.playerHandValue, this.game.dealerHandValue );
     }
 
     stand(){
-        this.view.messageHidden();
-
         if( !this.game.isRoundInProgress ){
             this.view.displayMessage( "Új kört kell indítanod, kattints a Start Round gombra!" , "orange" );
             return;
         }
 
+        // A dealernek eddig egy kártyája volt, itt 17-ig húzza a kártyákat.
+        // Megtörténik a játék kiértékelése is.
         this.game.takeStand();
         this.view.removeCards( "dealer" );
         this.view.displayCard( "dealer", this.game.dealerHand );

@@ -10,7 +10,7 @@ export class Game {
         this.player = new BlackjackPlayer( gameConfig.playerChips );
         this.dealer = new BlackjackPlayer( 0 );
         this.deck = new Deck( deckConfig );
-        this.isRoundInProgress = false; // Egy round startGametől standig tart.
+        this.isRoundInProgress = false; // startRound-tól takeStand-ig tart egy kör.
         this.isPlayerWinTheRound = false;
         this.isDealerWinTheRound = false;
     }

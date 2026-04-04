@@ -13,16 +13,16 @@ export class ViewController{
     }
     
     createCardElement( card ){
-        const cardImage = document.createElement('img');
+        const cardImage = document.createElement( 'img' );
         cardImage.src = `../images/deck/${card.rank}_of_${card.suit}.svg`;
         return cardImage;
     }
     
-    async displayCard( who, cards ){
+    displayCard( who, cards ){
         const handElement = document.getElementById( `${who}HandContainer` );
-        const cardList = Array.isArray(cards) ? cards : [cards];
-        for (const card of cardList) {
-            handElement.appendChild( this.createCardElement(card) );
+        const cardList = Array.isArray( cards ) ? cards : [ cards ];
+        for( const card of cardList ) {
+            handElement.appendChild( this.createCardElement( card ) );
         }
     }
     
@@ -39,6 +39,7 @@ export class ViewController{
     }
     
     messageHidden(){
+        const message = document.getElementById( "message" );
         message.style.visibility = "hidden";
     }
 

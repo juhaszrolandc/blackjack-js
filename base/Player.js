@@ -3,12 +3,20 @@ import { Card } from './Card.js';
 export class Player {
 
     constructor( chipsCount = 0 ){
-        if( !Number.isInteger(chipsCount) || chipsCount < 0 ){
+        if( !Number.isInteger( chipsCount ) || chipsCount < 0 ){
             throw new Error( "A zsetonok száma kizárólag nem negatív egész szám lehet!" );
         }
 
         this.chips = chipsCount;
         this.initRound();
+    }
+
+    get lastCard(){
+        if( this.hand.length === 0 ){
+            throw new Error("Egyetlen lap sincs a játékos kezében!");
+        }
+
+        return this.hand[ this.hand.length -1 ];
     }
 
     initRound(){
@@ -18,7 +26,7 @@ export class Player {
     }
 
     takeBet( bet ){
-        if( Number.isInteger( bet ) && bet <= 0 ){
+        if( !Number.isInteger( bet ) || bet < 0 ){
             throw new Error( "A tétnek nem negatív egész számnak kell lennie!" );
         }
 
@@ -32,19 +40,11 @@ export class Player {
     }
 
     addChip( chipCount ){
-        if( !Number.isInteger(chipCount) || chipCount < 0 ){
+        if( !Number.isInteger( chipCount ) || chipCount < 0 ){
             throw new Error( "A zsetonok száma kizárólag nem negatív egész szám lehet!" );
         }
 
         this.chips += chipCount;
-    }
-
-    get lastCard(){
-        if( this.hand.length === 0 ){
-            throw new Error("Egyetlen lap sincs a játékos kezében!");
-        }
-
-        return this.hand[ this.hand.length -1 ];
     }
 
     addCard( card ){
