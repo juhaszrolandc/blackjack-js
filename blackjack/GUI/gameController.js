@@ -34,8 +34,12 @@ export class GameController {
             return;
         }
 
+        // Ha korábban kiírtunk valamit, azt letakarítjuk (biztosan nem releváns).
         this.view.messageHidden();
+
+        // A player kap egy új kártyát.
         this.game.takeHit();
+        
         this.view.displayCard( "player", this.game.lastPlayerCard );
         this.view.displayState( this.game.chipsCount, this.game.playerHandValue, this.game.dealerHandValue );
     }
@@ -47,10 +51,12 @@ export class GameController {
         }
 
         // A dealernek eddig egy kártyája volt, itt 17-ig húzza a kártyákat.
-        // Megtörténik a játék kiértékelése is.
         this.game.takeStand();
+
+        // A dealer összes kártyáját kirajzoljuk.
         this.view.removeCards( "dealer" );
         this.view.displayCard( "dealer", this.game.dealerHand );
+
         this.view.displayState( this.game.chipsCount, this.game.playerHandValue, this.game.dealerHandValue );
         this.roundAnnouncement( this.game.isPlayerWinTheRound, this.game.isDealerWinTheRound );
     }
