@@ -6,7 +6,15 @@
     <title>Black Jack Game</title>
 
     <script type="module">
-        import {  } from './GUI.js';
+        import { Game } from '../game_logic/blackjackGame.js'
+        import { GameController } from './gameController.js';
+        import { ViewController } from './viewController.js';
+
+        const game = new Game();
+        const view = new ViewController();
+        const gameController = new GameController( game, view );
+        view.init( gameController );
+        view.displayState( game.chipsCount, game.playerHandValue, game.dealerHandValue );
     </script>
 
 </head><body>

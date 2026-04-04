@@ -9,6 +9,7 @@ export class Game {
         this.player = new BlackjackPlayer( gameConfig.playerChips );
         this.dealer = new BlackjackPlayer( 0 );
         this.deck = new Deck( deckConfig );
+        this.isRoundInProgress = false; // Egy round startGametől standig tart.
         this.isPlayerWinTheRound = false;
         this.isDealerWinTheRound = false;
     }
@@ -21,11 +22,11 @@ export class Game {
         return this.dealer.lastCard;
     }
 
-    get playerCard(){
+    get playerHand(){
         return this.player.hand;
     }
 
-    get dealerCard(){
+    get dealerHand(){
         return this.dealer.hand;
     }
 
@@ -42,10 +43,16 @@ export class Game {
     }
 
     startRound(){
-        this.initRound();
+        this.deck.create( deckConfig );
+        this.player.initRound();
+        this.dealer.initRound();
         this.player.takeBet( gameConfig.fixBet );
         this.player.addCard( this.deck.drawCard() );
         this.dealer.addCard( this.deck.drawCard() );
+
+        this.isPlayerWinTheRound = false;
+        this.isDealerWinTheRound = false;
+        this.isRoundInProgress = true;
     }
 
     takeHit(){
@@ -55,28 +62,7 @@ export class Game {
     takeStand(){
         this.playDealerTurn();
         this.settleRound();
-    }
-
-    getState(){
-        return { 
-            "chipsCount": this.player.chips, 
-            "playerHandValue": this.player.handValue, 
-            "dealerHandValue": this.dealer.handValue,
-            "isPlayerWin": this.isPlayerWinTheRound,
-            "isDealerWin": this.isDealerWinTheRound
-        };
-    }
-
-    /*
-     Szabályok:
-     - Minden kör friss paklival indul.
-     */
-    initRound(){
-        this.deck.create( deckConfig );
-        this.player.initRound();
-        this.dealer.initRound();
-        this.isPlayerWinTheRound = false;
-        this.isDealerWinTheRound = false;
+        this.isRoundInProgress = false;
     }
 
 

@@ -8,9 +8,15 @@ export class BlackjackPlayer extends Player {
         super( chipsCount );
     }
 
-    handEvaluator(){
-        let newHandValue = this.handValue + this.lastCard.value;
-        let acesCount = this.hand.filter( card => card.rank === "ace" ).length;
+    handEvaluator() {
+
+        let newHandValue = 0;
+        let acesCount = 0;
+
+        for( const card of this.hand ) {
+            newHandValue += card.value;
+            if (card.rank === "ace") acesCount++;
+        }
 
         while( newHandValue > gameConfig.blackjack && acesCount > 0 ) {
             newHandValue -= gameConfig.aceValue;
