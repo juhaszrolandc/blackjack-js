@@ -5,6 +5,7 @@ export class GameController {
         this.view = view;
     }
 
+
     start(){
         if( this.game.isRoundInProgress ){
             this.view.displayMessage( "Már elindítottad a játékot, le kell játszanod egy kört!" , "orange" );
@@ -28,6 +29,7 @@ export class GameController {
         this.view.displayState( this.game.chipsCount, this.game.playerHandValue, this.game.dealerHandValue );
     }
 
+
     hit(){
         if( !this.game.isRoundInProgress ){
             this.view.displayMessage( "Új kört kell indítanod, kattints a Start Round gombra!" , "orange" );
@@ -37,12 +39,16 @@ export class GameController {
         // Ha korábban kiírtunk valamit, azt letakarítjuk (biztosan nem releváns).
         this.view.messageHidden();
 
-        // A player kap egy új kártyát.
+        // A player kap egy új kártyát, ha még nem lépte át a 21-et.
         this.game.takeHit();
-        
         this.view.displayCard( "player", this.game.lastPlayerCard );
         this.view.displayState( this.game.chipsCount, this.game.playerHandValue, this.game.dealerHandValue );
+
+        if( this.game.isPlayerBust ){
+            this.stand();
+        }
     }
+
 
     stand(){
         if( !this.game.isRoundInProgress ){
@@ -53,23 +59,33 @@ export class GameController {
         // A dealernek eddig egy kártyája volt, itt 17-ig húzza a kártyákat.
         this.game.takeStand();
 
+        // Itt a játékosnak kiosztásra kerül a nyeresék / levonásra a veszteség.
+        const announcement = this.game.settleRound();
+
         // A dealer összes kártyáját kirajzoljuk.
         this.view.removeCards( "dealer" );
         this.view.displayCard( "dealer", this.game.dealerHand );
-
+        
         this.view.displayState( this.game.chipsCount, this.game.playerHandValue, this.game.dealerHandValue );
-        this.roundAnnouncement( this.game.isPlayerWinTheRound, this.game.isDealerWinTheRound );
+        this.displayAnnouncement( announcement );
     }
 
-    roundAnnouncement( isPlayerWinTheRound, isDealerWinTheRound ){
-        if( isPlayerWinTheRound && !isDealerWinTheRound ){
-            this.view.displayMessage( "Gratulálok, nyertél!", "Green" );
 
-        } else if ( !isPlayerWinTheRound && isDealerWinTheRound ){
-            this.view.displayMessage( "Sajnos vesztettél!", "Red" );
+    displayAnnouncement( announcement ){
+        if( announcement === "win" ){
+            this.view.displayMessage( "Gratulálok, nyertél!", "green" );
+
+        } else if( announcement === "blackjack" ){
+            this.view.displayMessage( "BLACKJACK! Nyertlél!", "green" )
+
+        } else if ( announcement === "loose" ){
+            this.view.displayMessage( "Sajnos vesztettél!", "red" );
+
+        } else if ( announcement === "bust" ){
+            this.view.displayMessage( "BUST! Vesztettél!", "red" );
 
         } else {
-            this.view.displayMessage( "Döntetlen!", "Orange" );
+            this.view.displayMessage( "Döntetlen!", "orange" );
         }
     }
 }

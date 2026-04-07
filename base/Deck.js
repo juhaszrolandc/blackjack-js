@@ -4,7 +4,11 @@ export class Deck {
 
     constructor( deckConfig ){
         this.cards = new Array();
-        this.create( deckConfig );
+
+        if( deckConfig ){
+            this.create( deckConfig );
+        }
+        
     }
 
     get length() {

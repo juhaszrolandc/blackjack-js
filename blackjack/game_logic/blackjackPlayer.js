@@ -26,4 +26,8 @@ export class BlackjackPlayer extends Player {
 
         return newHandValue;
     }
+
+    hasBlackjack(){
+        return this.handValue === 21 && this.hand.length === 2;
+    }
 }

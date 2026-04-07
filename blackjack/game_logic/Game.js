@@ -11,8 +11,6 @@ export class Game {
         this.dealer = new BlackjackPlayer( 0 );
         this.deck = new Deck( deckConfig );
         this.isRoundInProgress = false; // startRound-tól takeStand-ig tart egy kör.
-        this.isPlayerWinTheRound = false;
-        this.isDealerWinTheRound = false;
     }
 
     get lastPlayerCard(){
@@ -39,6 +37,10 @@ export class Game {
         return this.player.handValue;
     }
 
+    get isPlayerBust(){
+        return this.player.handValue > gameConfig.blackjack;
+    }
+
     get dealerHandValue(){
         return this.dealer.handValue;
     }
@@ -48,11 +50,10 @@ export class Game {
         this.player.initRound();
         this.dealer.initRound();
         this.player.takeBet( gameConfig.fixBet );
+
+        //  Mindenki egy kártyával kezd.
         this.player.addCard( this.deck.drawCard() );
         this.dealer.addCard( this.deck.drawCard() );
-
-        this.isPlayerWinTheRound = false;
-        this.isDealerWinTheRound = false;
         this.isRoundInProgress = true;
     }
 
@@ -62,16 +63,12 @@ export class Game {
 
     takeStand(){
         this.playDealerTurn();
-        this.settleRound();
         this.isRoundInProgress = false;
     }
 
 
-    /*
-      Szabályok:
-      - Amikor a játékos Stand-ol, a bank addig húz új kártyákat, amíg 17-et vagy magasabbat ér el.
-    */
     playDealerTurn(){
+        // Amikor a játékos Stand-ol, a bank addig húz új kártyákat, amíg 17-et vagy magasabbat ér el.
         while( this.deck.length > 0 && this.dealer.handValue < gameConfig.dealerStandValue ){
             this.dealer.addCard( this.deck.drawCard() );
         }
@@ -79,30 +76,32 @@ export class Game {
         return this.dealer.handValue;
     }
 
-    /*
-      Szabályok:
-      - A kör végén az nyeri el a másik tétjét, aki közelebb van a 21-hez.
-      - Ha a player 21 fölé megy, az osztó nyer, fordított esetben a playerhez.
-      - Ha a player és az osztó is átlépi a 21-et, akkor is a ház nyer.
-    */
+
     settleRound(){
+        // Ha a player 21 fölé megy, bust és veszít
         if( this.player.handValue > gameConfig.blackjack ){
-            this.isPlayerWinTheRound = false;
-            this.isDealerWinTheRound = true;
+            return "bust";
+        
+        // Ha a játékos az első két lapjának összértéke pontosan 21 (Blackjack), 
+        // és az osztó nem Blackjack-et ért el, akkor a játékos a megtett tétet 3:1 arányban kapja meg.
+        } else if( this.player.hasBlackjack() ){
+            this.player.addChip( 3*this.player.bet );
+            return "blackjack"
 
+        // Ha a játékos lapjainak összértéke közelebb van a 21-hez, mint az osztóé
+        // vagy ha az osztó lapjainak összértéke a játék során a 21-et meghaladja (Bust)
+        // akkor a játékos a tétet 2:1 arányban kapja meg.
         } else if( this.dealer.handValue > gameConfig.blackjack || this.player.handValue > this.dealer.handValue ){
-            this.isPlayerWinTheRound = true;
-            this.isDealerWinTheRound = false;
-            this.player.addChip( this.player.bet + 1 );
-
+            this.player.addChip( 2*this.player.bet );
+            return "win";
+        
+        // Ha az osztóé lapjainak összértéke közelebb van a 21-hez, a jétékos veszít
         } else if( this.player.handValue < this.dealer.handValue ){
-            this.isPlayerWinTheRound = false;
-            this.isDealerWinTheRound = true;
+            return "loose";
 
         } else {
-            this.isPlayerWinTheRound = false;
-            this.isDealerWinTheRound = false;
             this.player.addChip( this.player.bet );
+            return "draw";
         }
     }
 

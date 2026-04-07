@@ -18,16 +18,16 @@ export class ViewController{
         return cardImage;
     }
     
-    displayCard( who, cards ){
-        const handElement = document.getElementById( `${who}HandContainer` );
+    displayCard( participant, cards ){
+        const handElement = document.getElementById( `${participant}HandContainer` );
         const cardList = Array.isArray( cards ) ? cards : [ cards ];
         for( const card of cardList ) {
             handElement.appendChild( this.createCardElement( card ) );
         }
     }
     
-    removeCards( who ) {
-        const handElement = document.getElementById( `${who}HandContainer` );
+    removeCards( participant ) {
+        const handElement = document.getElementById( `${participant}HandContainer` );
         handElement.replaceChildren();
     }
     
@@ -41,6 +41,13 @@ export class ViewController{
     messageHidden(){
         const message = document.getElementById( "message" );
         message.style.visibility = "hidden";
+    }
+
+    clear(){
+        this.messageHidden();
+        this.removeCards( "player" );
+        this.removeCards( "dealer" );
+        this.displayState( "-", "-", "-" );
     }
 
 }
