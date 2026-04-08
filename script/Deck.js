@@ -8,7 +8,6 @@ export class Deck {
         if( deckConfig ){
             this.create( deckConfig );
         }
-        
     }
 
     get length() {
