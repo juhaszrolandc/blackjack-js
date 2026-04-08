@@ -17,11 +17,11 @@ export class GameController {
         this.view.removeCards( "player" );
         this.view.removeCards( "dealer" );
         
-       //try {
+       try {
             this.game.startRound();
-       //} catch {
-       //    this.view.displayMessage( "Játék indítása sikertelen! Elfogytak a zsetonok?", "red" );
-       //}
+       } catch {
+           this.view.displayMessage( "Játék indítása sikertelen! Elfogytak a zsetonok?", "red" );
+       }
 
         // A round elején a dealer és a player is kap egy-egy kártyát.
         this.view.displayCard( "player", this.game.lastPlayerCard );
