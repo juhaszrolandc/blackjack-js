@@ -1,4 +1,4 @@
-import { Player } from '../../base/Player.js';
+import { Player } from './Player.js';
 
 // A chace "no-store" azért kell, mert a böngésző a tesztelésnél nem frissült mindig megfelelően
 const gameConfig = await fetch( '../config/gameConfig.json', { cache: "no-store" } ).then( res => res.json() );

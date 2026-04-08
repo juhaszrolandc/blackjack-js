@@ -1,5 +1,5 @@
-import { BlackjackPlayer } from './blackjackPlayer.js';
-import { Deck } from '../../base/Deck.js';
+import { BlackjackPlayer } from './BlackjackPlayer.js';
+import { Deck } from './Deck.js';
 
 // A chace "no-store" azért kell, mert a böngésző a tesztelésnél nem frissült mindig megfelelően
 const gameConfig = await fetch( '../config/gameConfig.json', { cache: "no-store" } ).then( res => res.json() );
@@ -47,7 +47,6 @@ export class Game {
     }
 
     startRound(){
-        console.log( deckConfig );
         this.deck.create( deckConfig );
         this.player.initRound();
         this.dealer.initRound();

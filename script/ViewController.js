@@ -14,7 +14,7 @@ export class ViewController{
     
     createCardElement( card ){
         const cardImage = document.createElement( 'img' );
-        cardImage.src = `../images/deck/${card.rank}_of_${card.suit}.svg`;
+        cardImage.src = `../assets/images/deck/${card.rank}_of_${card.suit}.svg`;
         return cardImage;
     }
     
