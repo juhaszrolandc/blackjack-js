@@ -9,7 +9,6 @@ export class BlackjackPlayer extends Player {
     }
 
     handEvaluator() {
-
         let handValue = 0;
         let aceCount = 0;
 
