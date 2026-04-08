@@ -17,10 +17,11 @@ export class Deck {
 
     create( deckConfig ){
         this.cards = new Array();
-        const { ranksValues, suits } = deckConfig;
+        const { rankValues, suits } = deckConfig;
+
         for( let suit of suits ){
-            for( let rank in ranksValues ){
-                this.addCard( suit, rank, ranksValues[ rank ] );
+            for( let rank in rankValues ){
+                this.addCard( suit, rank, rankValues[ rank ] );
             }
         }
     }

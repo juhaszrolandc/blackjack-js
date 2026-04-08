@@ -1,8 +1,9 @@
 import { BlackjackPlayer } from './blackjackPlayer.js';
 import { Deck } from '../../base/Deck.js';
 
-const gameConfig = await fetch( '../config/gameConfig.json' ).then( res => res.json() );
-const deckConfig = await fetch( '../config/deckConfig.json' ).then( res => res.json() );
+// A chace "no-store" azért kell, mert a böngésző a tesztelésnél nem frissült mindig megfelelően
+const gameConfig = await fetch( '../config/gameConfig.json', { cache: "no-store" } ).then( res => res.json() );
+const deckConfig = await fetch( '../config/deckConfig.json', { cache: "no-store" } ).then( res => res.json() );
 
 export class Game {
 
@@ -38,7 +39,7 @@ export class Game {
     }
 
     get isPlayerBust(){
-        return this.player.handValue > gameConfig.blackjack;
+        return this.player.handValue > gameConfig.blackjackValue;
     }
 
     get dealerHandValue(){
@@ -46,14 +47,16 @@ export class Game {
     }
 
     startRound(){
+        console.log( deckConfig );
         this.deck.create( deckConfig );
         this.player.initRound();
         this.dealer.initRound();
-        this.player.takeBet( gameConfig.fixBet );
+        this.player.placeBet( gameConfig.fixBet );
 
-        //  Mindenki egy kártyával kezd.
-        this.player.addCard( this.deck.drawCard() );
+        // Szabály szerint az osztó húz először lapot.
+        // Ezt követően a játékos kezébe is adunk egy lapot.
         this.dealer.addCard( this.deck.drawCard() );
+        this.player.addCard( this.deck.drawCard() );
         this.isRoundInProgress = true;
     }
 
@@ -79,25 +82,25 @@ export class Game {
 
     settleRound(){
         // Ha a player 21 fölé megy, bust és veszít
-        if( this.player.handValue > gameConfig.blackjack ){
+        if( this.player.handValue > gameConfig.blackjackValue ){
             return "bust";
         
         // Ha a játékos az első két lapjának összértéke pontosan 21 (Blackjack), 
         // és az osztó nem Blackjack-et ért el, akkor a játékos a megtett tétet 3:1 arányban kapja meg.
-        } else if( this.player.hasBlackjack() ){
+        } else if( this.player.hasBlackjack() && !this.dealer.hasBlackjack() ){
             this.player.addChip( 3*this.player.bet );
             return "blackjack"
 
         // Ha a játékos lapjainak összértéke közelebb van a 21-hez, mint az osztóé
         // vagy ha az osztó lapjainak összértéke a játék során a 21-et meghaladja (Bust)
         // akkor a játékos a tétet 2:1 arányban kapja meg.
-        } else if( this.dealer.handValue > gameConfig.blackjack || this.player.handValue > this.dealer.handValue ){
+        } else if( this.dealer.handValue > gameConfig.blackjackValue || this.player.handValue > this.dealer.handValue ){
             this.player.addChip( 2*this.player.bet );
             return "win";
         
-        // Ha az osztóé lapjainak összértéke közelebb van a 21-hez, a jétékos veszít
+        // Ha az osztó lapjainak összértéke közelebb van a 21-hez, a játékos veszít
         } else if( this.player.handValue < this.dealer.handValue ){
-            return "loose";
+            return "lose";
 
         } else {
             this.player.addChip( this.player.bet );

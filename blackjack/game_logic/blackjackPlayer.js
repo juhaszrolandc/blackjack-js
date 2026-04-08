@@ -1,5 +1,7 @@
 import { Player } from '../../base/Player.js';
-const gameConfig = await fetch( '../config/gameConfig.json' ).then( res => res.json() );
+
+// A chace "no-store" azért kell, mert a böngésző a tesztelésnél nem frissült mindig megfelelően
+const gameConfig = await fetch( '../config/gameConfig.json', { cache: "no-store" } ).then( res => res.json() );
 
 
 export class BlackjackPlayer extends Player {
@@ -10,24 +12,25 @@ export class BlackjackPlayer extends Player {
 
     handEvaluator() {
 
-        let newHandValue = 0;
-        let acesCount = 0;
+        let handValue = 0;
+        let aceCount = 0;
 
         for( const card of this.hand ) {
-            newHandValue += card.value;
-            if (card.rank === "ace") acesCount++;
+            handValue += card.value;
+            if (card.rank === "ace") aceCount++;
         }
 
-        while( newHandValue > gameConfig.blackjack && acesCount > 0 ) {
-            newHandValue -= gameConfig.aceValue;
-            newHandValue += gameConfig.reducedAceValue;
-            acesCount--;
+        while( handValue > gameConfig.blackjackTarget && aceCount > 0 ) {
+            handValue -= gameConfig.aceValue;
+            handValue += gameConfig.reducedAceValue;
+            aceCount--;
         }
 
-        return newHandValue;
+        return handValue;
     }
 
     hasBlackjack(){
-        return this.handValue === 21 && this.hand.length === 2;
+        return this.handValue === gameConfig.blackjackValue 
+               && this.hand.length === gameConfig.blackjackCardCount;
     }
 }

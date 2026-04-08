@@ -17,11 +17,11 @@ export class GameController {
         this.view.removeCards( "player" );
         this.view.removeCards( "dealer" );
         
-        try {
+       //try {
             this.game.startRound();
-        } catch {
-            this.view.displayMessage( "Játék indítása sikertelen! Elfogytak a zsetonok?", "red" );
-        }
+       //} catch {
+       //    this.view.displayMessage( "Játék indítása sikertelen! Elfogytak a zsetonok?", "red" );
+       //}
 
         // A round elején a dealer és a player is kap egy-egy kártyát.
         this.view.displayCard( "player", this.game.lastPlayerCard );
@@ -78,7 +78,7 @@ export class GameController {
         } else if( announcement === "blackjack" ){
             this.view.displayMessage( "BLACKJACK! Nyertlél!", "green" )
 
-        } else if ( announcement === "loose" ){
+        } else if ( announcement === "lose" ){
             this.view.displayMessage( "Sajnos vesztettél!", "red" );
 
         } else if ( announcement === "bust" ){

@@ -2,12 +2,12 @@ import { Card } from './Card.js';
 
 export class Player {
 
-    constructor( chipsCount = 0 ){
-        if( !Number.isInteger( chipsCount ) || chipsCount < 0 ){
+    constructor( chipCount = 0 ){
+        if( !Number.isInteger( chipCount ) || chipCount < 0 ){
             throw new Error( "A zsetonok száma kizárólag nem negatív egész szám lehet!" );
         }
 
-        this.chips = chipsCount;
+        this.chips = chipCount;
         this.initRound();
     }
 
@@ -25,7 +25,7 @@ export class Player {
         this.hand = new Array();
     }
 
-    takeBet( bet ){
+    placeBet( bet ){
         if( !Number.isInteger( bet ) || bet < 0 ){
             throw new Error( "A tétnek nem negatív egész számnak kell lennie!" );
         }
@@ -57,7 +57,13 @@ export class Player {
     }
 
     handEvaluator(){
-        return this.handValue + this.lastCard.value;
+        let handValue = 0;
+
+        for( const card of this.hand ) {
+            handValue += card.value;
+        }
+
+        return handValue;
     }
 
 }
