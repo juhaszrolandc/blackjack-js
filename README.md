@@ -1,17 +1,17 @@
-## base/...
+## script/Card.js, script/Deck.js, script/Player.js
 A Card, Deck, Player osztályok nem tartalmaznak blackjack specifikus részeket.
 A blackjack játék logikájától teljesen leválasztott.
 
-## blackjack/GUI/ViewController.js
+## script/ViewController.js
 A DOM-al kommunikáló metódusok: displayCard, displayMessage, ...
 
-## blackjack/game_logic/Game.js
+## script/Game.js
 Csak a játék logikáját tartalmazza, a megjelenítéssel egyáltalán nem foglalkozik.
 Még ViewController metódusokat sem hív.
 
-## blackjack/GUI/GameController.js
+## script/GameController.js
 A Game objectet és a ViewControllert kapcsolja össze.
 
-## blackjack/game_logic/BlackjackPlayer.js
+## script/BlackjackPlayer.js
 A Player osztály gyermeke, ami már blackjack specifikus részeket is tartalmaz.
 

@@ -53,7 +53,6 @@ export class Game {
         this.player.placeBet( gameConfig.fixBet );
 
         // Szabály szerint az osztó húz először lapot.
-        // Ezt követően a játékos kezébe is adunk egy lapot.
         this.dealer.addCard( this.deck.drawCard() );
         this.player.addCard( this.deck.drawCard() );
         this.isRoundInProgress = true;
@@ -68,7 +67,6 @@ export class Game {
         this.isRoundInProgress = false;
     }
 
-
     playDealerTurn(){
         // Amikor a játékos Stand-ol, a bank addig húz új kártyákat, amíg 17-et vagy magasabbat ér el.
         while( this.deck.length > 0 && this.dealer.handValue < gameConfig.dealerStandValue ){
@@ -78,21 +76,20 @@ export class Game {
         return this.dealer.handValue;
     }
 
-
     settleRound(){
         // Ha a player 21 fölé megy, bust és veszít
         if( this.player.handValue > gameConfig.blackjackValue ){
             return "bust";
         
-        // Ha a játékos az első két lapjának összértéke pontosan 21 (Blackjack), 
-        // és az osztó nem Blackjack-et ért el, akkor a játékos a megtett tétet 3:1 arányban kapja meg.
+        /* Ha a játékos az első két lapjának összértéke pontosan 21 (Blackjack), 
+           és az osztó nem Blackjack-et ért el, akkor a játékos a megtett tétet 3:1 arányban kapja meg.*/
         } else if( this.player.hasBlackjack() && !this.dealer.hasBlackjack() ){
             this.player.addChip( 3*this.player.bet );
             return "blackjack"
 
-        // Ha a játékos lapjainak összértéke közelebb van a 21-hez, mint az osztóé
-        // vagy ha az osztó lapjainak összértéke a játék során a 21-et meghaladja (Bust)
-        // akkor a játékos a tétet 2:1 arányban kapja meg.
+        /* Ha a játékos lapjainak összértéke közelebb van a 21-hez, mint az osztóé
+           vagy ha az osztó lapjainak összértéke a játék során a 21-et meghaladja (Bust)
+           akkor a játékos a tétet 2:1 arányban kapja meg. */
         } else if( this.dealer.handValue > gameConfig.blackjackValue || this.player.handValue > this.dealer.handValue ){
             this.player.addChip( 2*this.player.bet );
             return "win";
@@ -106,7 +103,5 @@ export class Game {
             return "draw";
         }
     }
-
-
 
 }

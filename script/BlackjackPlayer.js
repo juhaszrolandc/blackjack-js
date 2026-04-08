@@ -5,7 +5,6 @@ const gameConfig = await fetch( '../config/gameConfig.json', { cache: "no-store"
 
 
 export class BlackjackPlayer extends Player {
-
     constructor( chipsCount = 0 ){
         super( chipsCount );
     }

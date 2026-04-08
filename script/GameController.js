@@ -5,7 +5,6 @@ export class GameController {
         this.view = view;
     }
 
-
     start(){
         if( this.game.isRoundInProgress ){
             this.view.displayMessage( "Már elindítottad a játékot, le kell játszanod egy kört!" , "orange" );
@@ -29,7 +28,6 @@ export class GameController {
         this.view.displayState( this.game.chipsCount, this.game.playerHandValue, this.game.dealerHandValue );
     }
 
-
     hit(){
         if( !this.game.isRoundInProgress ){
             this.view.displayMessage( "Új kört kell indítanod, kattints a Start Round gombra!" , "orange" );
@@ -48,7 +46,6 @@ export class GameController {
             this.stand();
         }
     }
-
 
     stand(){
         if( !this.game.isRoundInProgress ){
@@ -69,7 +66,6 @@ export class GameController {
         this.view.displayState( this.game.chipsCount, this.game.playerHandValue, this.game.dealerHandValue );
         this.displayAnnouncement( announcement );
     }
-
 
     displayAnnouncement( announcement ){
         if( announcement === "win" ){

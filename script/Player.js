@@ -13,7 +13,7 @@ export class Player {
 
     get lastCard(){
         if( this.hand.length === 0 ){
-            throw new Error("Egyetlen lap sincs a játékos kezében!");
+            throw new Error( "Egyetlen lap sincs a játékos kezében!" );
         }
 
         return this.hand[ this.hand.length -1 ];
