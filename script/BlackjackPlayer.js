@@ -15,12 +15,11 @@ export class BlackjackPlayer extends Player {
         for( const card of this.hand ) {
             handValue += card.value;
             if(card.rank === "ace"){
-                console.log("ace found");
                 aceCount++;
             }
         }
 
-        while( handValue > gameConfig.blackjackValue && aceCount > 0 ) {
+        while( handValue > gameConfig.maxValue && aceCount > 0 ) {
             handValue -= gameConfig.aceValue;
             handValue += gameConfig.reducedAceValue;
             aceCount--;
@@ -30,7 +29,7 @@ export class BlackjackPlayer extends Player {
     }
 
     hasBlackjack(){
-        return this.handValue === gameConfig.blackjackValue 
+        return this.handValue === gameConfig.maxValue 
                && this.hand.length === gameConfig.blackjackCardCount;
     }
 }

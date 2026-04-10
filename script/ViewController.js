@@ -1,9 +1,9 @@
 export class ViewController{
 
     init( gameController ) {
-        document.getElementById( "startBtn" ).addEventListener( "click", () => gameController.start() );
-        document.getElementById( "hitBtn" ).addEventListener( "click", () => gameController.hit() );
-        document.getElementById( "standBtn" ).addEventListener( "click", () => gameController.stand() );
+        document.getElementById( "startBtn" ).addEventListener( "click", () => gameController.startRound() );
+        document.getElementById( "hitBtn" ).addEventListener( "click", () => gameController.takeHit() );
+        document.getElementById( "standBtn" ).addEventListener( "click", () => gameController.takeStand() );
     }
 
     displayState( chipsCount, playerHandValue, dealerHandValue ){
@@ -48,6 +48,12 @@ export class ViewController{
         this.removeCards( "player" );
         this.removeCards( "dealer" );
         this.displayState( "-", "-", "-" );
+    }
+
+    setButtonStates( startButtonDisable = true, hitButtonDisable = false, standButtonDisable = false ){
+        document.getElementById(`startBtn`).disabled = startButtonDisable;
+        document.getElementById(`hitBtn`).disabled = hitButtonDisable;
+        document.getElementById(`standBtn`).disabled = standButtonDisable;
     }
 
 }

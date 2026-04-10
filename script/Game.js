@@ -7,64 +7,100 @@ const deckConfig = await fetch( '../config/deckConfig.json', { cache: "no-store"
 
 export class Game {
 
-    constructor(){
+    constructor( view ){
         this.player = new BlackjackPlayer( gameConfig.playerChips );
         this.dealer = new BlackjackPlayer( 0 );
         this.deck = new Deck( deckConfig );
-        this.isRoundInProgress = false; // startRound-tól takeStand-ig tart egy kör.
-    }
-
-    get lastPlayerCard(){
-        return this.player.lastCard;
-    }
-
-    get lastDealerCard(){
-        return this.dealer.lastCard;
-    }
-
-    get playerHand(){
-        return this.player.hand;
-    }
-
-    get dealerHand(){
-        return this.dealer.hand;
-    }
-
-    get chipsCount(){
-        return this.player.chips;
-    }
-
-    get playerHandValue(){
-        return this.player.handValue;
+        this.isRoundInProgress = false;
+        this.view = view;
     }
 
     get isPlayerBust(){
-        return this.player.handValue > gameConfig.blackjackValue;
+        return this.player.handValue > gameConfig.maxValue;
     }
 
-    get dealerHandValue(){
-        return this.dealer.handValue;
-    }
-
-    startRound(){
+    initRound(){
         this.deck.create( deckConfig );
         this.player.initRound();
         this.dealer.initRound();
-        this.player.placeBet( gameConfig.fixBet );
-
-        // Szabály szerint az osztó húz először lapot.
-        this.dealer.addCard( this.deck.drawCard() );
-        this.player.addCard( this.deck.drawCard() );
         this.isRoundInProgress = true;
     }
 
-    takeHit(){
+    startRound(){
+        if( this.isRoundInProgress ){
+            this.view.displayMessage( "Már elindítottad a játékot, le kell játszanod egy kört!" , "orange" );
+            return;
+        }
+
+        if( this.player.chips <= 0 ){
+            this.view.displayMessage( "Elfogytak a zsetonok!", "red" );
+            return;
+        }
+
+        this.initRound();
+
+        // Szabály szerint a player tétet rak, és az osztó húz először lapot.
+        this.player.placeBet( gameConfig.fixBet );
+        this.dealer.addCard( this.deck.drawCard() );
         this.player.addCard( this.deck.drawCard() );
+
+        // Letakarítsuk az előző round maradványait.
+        this.view.messageHidden();
+        this.view.removeCards( "player" );
+        this.view.removeCards( "dealer" );
+
+        this.view.setButtonStates( true, false, false );
+        this.view.displayCard( "player", this.player.lastCard );
+        this.view.displayCard( "dealer", this.dealer.lastCard );
+        this.view.displayState( this.player.chips, this.player.handValue, this.dealer.handValue );
+
+    }
+
+    takeHit(){
+        if( !this.isRoundInProgress ){
+            this.view.displayMessage( "Új kört kell indítanod, kattints a Start Round gombra!" , "orange" );
+            return;
+        }
+
+        this.player.addCard( this.deck.drawCard() );
+
+        // Ha korábban kiírtunk valamit, azt letakarítjuk (biztosan nem releváns).
+        this.view.messageHidden();
+        this.view.displayCard( "player", this.player.lastCard );
+        this.view.displayState( this.player.chips, this.player.handValue, this.dealer.handValue );
+
+        // Biztosan veszített a player, a játéknak vége.
+        if( this.isPlayerBust ){
+            const announcement = this.settleRound();
+            this.displayAnnouncement( announcement );
+            this.view.setButtonStates( false, true, true );
+            return;
+        }
+
+        // Ha a player elérhe a 21-et, felesleges tovább folytatni a kört.
+        if( this.player.handValue === gameConfig.maxValue ){
+            this.takeStand();
+            return;
+        }
     }
 
     takeStand(){
+        if( !this.isRoundInProgress ){
+            this.view.displayMessage( "Új kört kell indítanod, kattints a Start Round gombra!" , "orange" );
+            return;
+        }
+
+        // A dealernek eddig egy kártyája volt, itt 17-ig húzza a kártyákat.
         this.playDealerTurn();
-        this.isRoundInProgress = false;
+        const announcement = this.settleRound();
+        
+        // A dealer összes kártyáját kirajzoljuk.
+        this.view.removeCards( "dealer" );
+        this.view.displayCard( "dealer", this.dealer.hand );
+
+        this.view.setButtonStates( false, true, true );
+        this.view.displayState( this.player.chips, this.player.handValue, this.dealer.handValue );
+        this.displayAnnouncement( announcement );
     }
 
     playDealerTurn(){
@@ -77,8 +113,10 @@ export class Game {
     }
 
     settleRound(){
+        this.isRoundInProgress = false;
+
         // Ha a player 21 fölé megy, bust és veszít
-        if( this.player.handValue > gameConfig.blackjackValue ){
+        if( this.isPlayerBust ){
             return "bust";
         
         /* Ha a játékos az első két lapjának összértéke pontosan 21 (Blackjack), 
@@ -90,7 +128,7 @@ export class Game {
         /* Ha a játékos lapjainak összértéke közelebb van a 21-hez, mint az osztóé
            vagy ha az osztó lapjainak összértéke a játék során a 21-et meghaladja (Bust)
            akkor a játékos a tétet 2:1 arányban kapja meg. */
-        } else if( this.dealer.handValue > gameConfig.blackjackValue || this.player.handValue > this.dealer.handValue ){
+        } else if( this.dealer.handValue > gameConfig.maxValue || this.player.handValue > this.dealer.handValue ){
             this.player.addChip( 2*this.player.bet );
             return "win";
         
@@ -104,4 +142,26 @@ export class Game {
         }
     }
 
+    displayAnnouncement( announcement ){
+        if( announcement === "win" ){
+            this.view.displayMessage( "Gratulálok, nyertél!", "green" );
+
+        } else if( announcement === "blackjack" ){
+            this.view.displayMessage( "BLACKJACK! Nyertlél!", "green" )
+
+        } else if ( announcement === "lose" ){
+            this.view.displayMessage( "Sajnos vesztettél!", "red" );
+
+        } else if ( announcement === "bust" ){
+            this.view.displayMessage( "BUST! Vesztettél!", "red" );
+
+        } else {
+            this.view.displayMessage( "Döntetlen!", "orange" );
+        }
+    }
+
+    displayState(){
+        this.view.setButtonStates( false, true, true );
+        this.view.displayState( this.player.chips, this.player.handValue, this.dealer.handValue );
+    }
 }

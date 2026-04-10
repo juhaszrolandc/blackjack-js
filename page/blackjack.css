@@ -101,3 +101,9 @@ body {
 #buttonContainer button:active {
     background:  #ff6073;
 }
+
+/* disable */
+#buttonContainer button:disabled {
+  cursor: not-allowed;
+  background:  #2f2f2f;
+}

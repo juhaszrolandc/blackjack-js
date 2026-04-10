@@ -1,7 +1,7 @@
 {
     "aceValue" : 11,
     "reducedAceValue" : 1,
-    "blackjackValue" : 21,
+    "maxValue" : 21,
     "blackjackCardCount": 2,
     "dealerStandValue" : 17,
     "fixBet" : 1,
