@@ -1,0 +1,59 @@
+export class ViewController{
+
+    init( gameController ) {
+        document.getElementById( "startBtn" ).addEventListener( "click", () => gameController.startRound() );
+        document.getElementById( "hitBtn" ).addEventListener( "click", () => gameController.takeHit() );
+        document.getElementById( "standBtn" ).addEventListener( "click", () => gameController.takeStand() );
+    }
+
+    displayState( chipsCount, playerHandValue, dealerHandValue ){
+        document.getElementById( "chipsCount" ).innerHTML = chipsCount;
+        document.getElementById( "playerHandValue" ).innerText = playerHandValue;
+        document.getElementById( "dealerHandValue" ).innerText = dealerHandValue;
+    }
+    
+    createCardElement( card ){
+        const cardImage = document.createElement( 'img' );
+        cardImage.src = `../assets/images/deck/${card.rank}_of_${card.suit}.svg`;
+        return cardImage;
+    }
+    
+    displayCard( participant, cards ){
+        const handElement = document.getElementById( `${participant}HandContainer` );
+        const cardList = Array.isArray( cards ) ? cards : [ cards ];
+        for( const card of cardList ) {
+            handElement.appendChild( this.createCardElement( card ) );
+        }
+    }
+    
+    removeCards( participant ) {
+        const handElement = document.getElementById( `${participant}HandContainer` );
+        handElement.replaceChildren();
+    }
+    
+    displayMessage( text, color ){
+        const message = document.getElementById( "message" );
+        message.innerHTML = text;
+        message.style.background = color;
+        message.style.visibility = "visible";
+    }
+    
+    messageHidden(){
+        const message = document.getElementById( "message" );
+        message.style.visibility = "hidden";
+    }
+
+    clear(){
+        this.messageHidden();
+        this.removeCards( "player" );
+        this.removeCards( "dealer" );
+        this.displayState( "-", "-", "-" );
+    }
+
+    setButtonStates( startButtonDisable = true, hitButtonDisable = false, standButtonDisable = false ){
+        document.getElementById(`startBtn`).disabled = startButtonDisable;
+        document.getElementById(`hitBtn`).disabled = hitButtonDisable;
+        document.getElementById(`standBtn`).disabled = standButtonDisable;
+    }
+
+}

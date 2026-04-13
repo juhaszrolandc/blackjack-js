@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="hu"><head>
+
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="blackjack.css">
+    <title>Black Jack Game</title>
+
+    <script type="module">
+        import '../script/Init.js';
+    </script>
+
+</head><body>
+
+    <div id="tableContainer">
+        <div id="leftSide">
+            <div class="handContainer" id="playerHandContainer"></div>
+            <p>
+                <span>Player:</span>
+                <span id="playerHandValue"></span>
+                <span> | </span>
+                <span>Chips: </span>
+                <span id="chipsCount"></span>
+            </p>
+        </div>
+
+        <div id="rightSide">
+            <div class="handContainer" id="dealerHandContainer"></div>
+            <p>
+                <span>Dealer:</span>
+                <span id="dealerHandValue"></span>
+            </p>
+        </div>
+    </div>
+
+    <p id="message"></p>
+
+    <div id="buttonContainer">
+        <button id="hitBtn">Hit</button>
+        <button id="standBtn">Stand</button>
+        <button id="startBtn">Start Round</button>
+    </div>
+
+</body></html>
