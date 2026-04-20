@@ -1,0 +1,1 @@
+{"version":3,"file":"Card.d.ts","sourceRoot":"","sources":["../typescript/Card.ts"],"names":[],"mappings":"AAAA,qBAAa,IAAI;IAGb,QAAQ,CAAC,IAAI,EAAE,MAAM;IACrB,QAAQ,CAAC,IAAI,EAAE,MAAM;IACrB,QAAQ,CAAC,KAAK,EAAE,MAAM;gBAFb,IAAI,EAAE,MAAM,EACZ,IAAI,EAAE,MAAM,EACZ,KAAK,EAAE,MAAM;CAEzB"}

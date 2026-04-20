@@ -2,30 +2,37 @@ import { Card } from './Card.js';
 
 export class Player {
 
-    constructor( chipCount = 0 ){
+    public chips: number;
+    public bet: number;
+    public handValue: number;
+    public hand: Card[];
+
+    constructor( chipCount: number = 0 ){
         if( !Number.isInteger( chipCount ) || chipCount < 0 ){
             throw new Error( "A zsetonok száma kizárólag nem negatív egész szám lehet!" );
         }
 
         this.chips = chipCount;
-        this.initRound();
-    }
-
-    get lastCard(){
-        if( this.hand.length === 0 ){
-            throw new Error( "Egyetlen lap sincs a játékos kezében!" );
-        }
-
-        return this.hand[ this.hand.length -1 ];
-    }
-
-    initRound(){
         this.bet = 0;
         this.handValue = 0;
         this.hand = new Array();
     }
 
-    placeBet( bet ){
+    get lastCard(): Card {
+        if( this.hand.length === 0 ){
+            throw new Error( "Egyetlen lap sincs a játékos kezében!" );
+        }
+
+        return this.hand[ this.hand.length -1 ]!;
+    }
+
+    initRound(): void {
+        this.bet = 0;
+        this.handValue = 0;
+        this.hand = new Array();
+    }
+
+    placeBet( bet: number ): number {
         if( !Number.isInteger( bet ) || bet < 0 ){
             throw new Error( "A tétnek nem negatív egész számnak kell lennie!" );
         }
@@ -39,7 +46,7 @@ export class Player {
         return this.bet;
     }
 
-    addChip( chipCount ){
+    addChip( chipCount: number ): void {
         if( !Number.isInteger( chipCount ) || chipCount < 0 ){
             throw new Error( "A zsetonok száma kizárólag nem negatív egész szám lehet!" );
         }
@@ -47,17 +54,13 @@ export class Player {
         this.chips += chipCount;
     }
 
-    addCard( card ){
-        if( !(card instanceof Card) ){
-            throw new Error( `Nem megfelelő típusú objektum: ${card.constructor.name}` );
-        }
-    
+    addCard( card: Card ): void {
         this.hand.push( card );
         this.handValue = this.handEvaluator();
     }
 
-    handEvaluator(){
-        let handValue = 0;
+    handEvaluator(): number {
+        let handValue: number = 0;
 
         for( const card of this.hand ) {
             handValue += card.value;

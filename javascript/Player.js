@@ -1,0 +1,51 @@
+export class Player {
+    constructor(chipCount = 0) {
+        if (!Number.isInteger(chipCount) || chipCount < 0) {
+            throw new Error("A zsetonok száma kizárólag nem negatív egész szám lehet!");
+        }
+        this.chips = chipCount;
+        this.bet = 0;
+        this.handValue = 0;
+        this.hand = new Array();
+    }
+    get lastCard() {
+        if (this.hand.length === 0) {
+            throw new Error("Egyetlen lap sincs a játékos kezében!");
+        }
+        return this.hand[this.hand.length - 1];
+    }
+    initRound() {
+        this.bet = 0;
+        this.handValue = 0;
+        this.hand = new Array();
+    }
+    placeBet(bet) {
+        if (!Number.isInteger(bet) || bet < 0) {
+            throw new Error("A tétnek nem negatív egész számnak kell lennie!");
+        }
+        if (this.chips < bet) {
+            throw new Error(`A playernek ${this.chips} zsetonja van, nem lehet ${bet} tétet rakni.`);
+        }
+        this.chips -= bet;
+        this.bet += bet;
+        return this.bet;
+    }
+    addChip(chipCount) {
+        if (!Number.isInteger(chipCount) || chipCount < 0) {
+            throw new Error("A zsetonok száma kizárólag nem negatív egész szám lehet!");
+        }
+        this.chips += chipCount;
+    }
+    addCard(card) {
+        this.hand.push(card);
+        this.handValue = this.handEvaluator();
+    }
+    handEvaluator() {
+        let handValue = 0;
+        for (const card of this.hand) {
+            handValue += card.value;
+        }
+        return handValue;
+    }
+}
+//# sourceMappingURL=Player.js.map
