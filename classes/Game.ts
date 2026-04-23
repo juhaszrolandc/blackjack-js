@@ -1,4 +1,4 @@
-import { BlackjackPlayer } from './BlackjackPlayer.js';
+import { Player } from './Player.js';
 import { ViewController } from './ViewController.js';
 import { Deck } from './Deck.js';
 
@@ -9,15 +9,15 @@ enum Announcement { Bust, Blackjack, Win, Lose, Draw };
 
 export class Game {
 
-    private player: BlackjackPlayer;
-    private dealer: BlackjackPlayer;
+    private player: Player;
+    private dealer: Player;
     private deck: Deck;
     private isRoundInProgress: boolean;
     private view: ViewController;
 
     constructor( view: ViewController ){
-        this.player = new BlackjackPlayer( gameConfig.playerChips );
-        this.dealer = new BlackjackPlayer( 0 );
+        this.player = new Player( gameConfig.playerChips );
+        this.dealer = new Player( 0 );
         this.deck = new Deck( deckConfig );
         this.isRoundInProgress = false;
         this.view = view;
