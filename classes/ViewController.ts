@@ -1,5 +1,4 @@
 import { Card } from './Card.js';
-import { Game } from './Game.js';
 
 type Participant = "player" | "dealer";
 

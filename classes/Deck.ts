@@ -1,11 +1,9 @@
 import { Card } from './Card.js';
 
-
 type deckConfigType = {
   rankValues: { [key: string]: number; };
   suits: string[];
 };
-
 
 export class Deck {
     private cards: Array<Card>;
