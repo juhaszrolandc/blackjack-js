@@ -3,25 +3,7 @@ import { Game } from './Game.js';
 
 type Participant = "player" | "dealer";
 
-// A követelmények szerint szükség volt egy interfacere
-interface View {
-    init( startRound: () => void, takeHit: () => void, takeStand: () => void ): void;
-    displayState( chipsCount: number | "-", playerHandValue: number | "-", dealerHandValue: number | "-" ): void;
-    createCardElement( card : Card ): HTMLImageElement;
-    displayCard( participant: Participant, cards: Card[] | Card ): void;
-    removeCards( participant: Participant ): void;
-    displayMessage( text: string, color: string ): void;
-    messageHidden(): void;
-    setButtonStates( startButtonDisable: boolean, hitButtonDisable: boolean, standButtonDisable: boolean ): void;
-}
-
-interface View2 extends View{
-    viewportDescription: String;
-}
-
-
-export class ViewController implements View {
-
+export class ViewController {
     init( startRound: () => void, takeHit: () => void, takeStand: () => void ): void {
         const startBtn: HTMLButtonElement = document.getElementById( "startBtn" ) as HTMLButtonElement;
         const hitBtn: HTMLButtonElement = document.getElementById( "hitBtn" ) as HTMLButtonElement;
@@ -91,5 +73,4 @@ export class ViewController implements View {
         hitBtn.disabled = hitButtonDisable;
         standBtn.disabled = standButtonDisable;
     }
-
 }

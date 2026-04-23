@@ -8,7 +8,6 @@ type deckConfigType = {
 
 
 export class Deck {
-    
     private cards: Array<Card>;
 
     constructor( deckConfig: deckConfigType ){
@@ -53,5 +52,4 @@ export class Deck {
         const randomIndex: number = Math.floor( randomNum*arrayLength );
         return randomIndex;
     }
-    
 }

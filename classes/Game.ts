@@ -8,7 +8,6 @@ const deckConfig = await fetch( '../config/deckConfig.json', { cache: "no-store"
 enum Announcement { Bust, Blackjack, Win, Lose, Draw };
 
 export class Game {
-
     private player: Player;
     private dealer: Player;
     private deck: Deck;

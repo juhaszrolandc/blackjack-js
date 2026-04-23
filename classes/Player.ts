@@ -4,7 +4,6 @@ import { Card } from './Card.js';
 const gameConfig = await fetch( '../config/gameConfig.json', { cache: "no-store" } ).then( res => res.json() );
 
 export class Player {
-
     public chips: number;
     public bet: number;
     public handValue: number;
@@ -86,5 +85,4 @@ export class Player {
         return this.handValue === gameConfig.maxValue 
                && this.hand.length === gameConfig.blackjackCardCount;
     }
-
 }

@@ -7,6 +7,5 @@ view.init( () => game.startRound(), () => game.takeHit(), () => game.takeStand()
 game.displayInitialState();
 
 window.addEventListener("beforeunload", function (e) {
-    const message: string = "Biztosan bezárja a játékot?";
-    return message;
+    e.preventDefault();
 });
