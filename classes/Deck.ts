@@ -20,7 +20,7 @@ export class Deck {
         return this.cards.length;
     }
 
-    create( deckConfig: deckConfigType ){
+    create( deckConfig: deckConfigType ): void {
         this.cards = new Array();
 
         for( let suit of deckConfig.suits ){
@@ -30,7 +30,7 @@ export class Deck {
         }
     }
 
-    private addCard( suit: string, rank: string, value: number ){
+    private addCard( suit: string, rank: string, value: number ): void {
         this.cards.push( new Card( suit, rank, value ) );
     }
 

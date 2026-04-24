@@ -63,19 +63,19 @@ export class Player {
 
     handEvaluator(): number {
         let handValue: number = 0;
-        let aceCount: number = 0;
+        let unreducedAceCount: number = 0;
 
         for( const card of this.hand ) {
             handValue += card.value;
-            if(card.rank === "ace"){
-                aceCount++;
+            if( card.rank === "ace" ){
+                unreducedAceCount++;
             }
         }
 
-        while( handValue > gameConfig.maxValue && aceCount > 0 ) {
+        while( handValue > gameConfig.maxValue && unreducedAceCount > 0 ) {
             handValue -= gameConfig.aceValue;
             handValue += gameConfig.reducedAceValue;
-            aceCount--;
+            unreducedAceCount--;
         }
 
         return handValue;
