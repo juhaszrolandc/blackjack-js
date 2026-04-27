@@ -1,8 +1,9 @@
 import { Card } from './Card.js';
+import { View } from './ViewInterface.js';
 
 type Participant = "player" | "dealer";
 
-export class ViewController {
+export class ViewController implements View {
     init( startRound: () => void, takeHit: () => void, takeStand: () => void ): void {
         const startBtn: HTMLButtonElement = document.getElementById( "startBtn" ) as HTMLButtonElement;
         const hitBtn: HTMLButtonElement = document.getElementById( "hitBtn" ) as HTMLButtonElement;
