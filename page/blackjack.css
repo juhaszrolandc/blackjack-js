@@ -16,10 +16,11 @@ body {
 /*TABLE*/
 #tableContainer {
     display: flex;
-    justify-content: space-around;
-    align-items: flex-start;
+    justify-content: center;
+    flex-wrap: wrap;
     gap: 40px;
     padding: 20px;
+
 }
 
 /*PLAYER / DEALER PANEL*/
@@ -28,8 +29,11 @@ body {
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    height: 350px;          /* fix magasság */
+
+    height: 350px;
+    width: 100%;
     width: 650px;
+
     padding: 15px 25px;
     border-radius: 15px;
     background: rgba(0, 0, 0, 0.4);
@@ -88,7 +92,8 @@ body {
     border: 0px;
     border-radius: 10px;
     padding: 12px 25px;
-    font-size: 18px;
+    /*font-size: 18px;*/
+    font-size: clamp(12px, 3vw, 18px);
     cursor: pointer;
 }
 
