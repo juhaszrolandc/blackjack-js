@@ -1,17 +1,31 @@
-import { Card } from './Card.js';
 import { View } from './ViewInterface.js';
 
 type Participant = "player" | "dealer";
+type Card = { rank:string, suit:string, value:number };
+type GameState = { "isRoundInProgress": boolean,
+                   "playerChips": number, 
+                   "playerHandValue": number, 
+                   "dealerHandValue": number, 
+                   "dealerHand": Card[], 
+                   "playerHand": Card[], 
+                   "message": { text: string, color: 'red' | 'green' | 'orange' | '' } }
 
 export class ViewController implements View {
-    init( startRound: () => void, takeHit: () => void, takeStand: () => void ): void {
-        const startBtn: HTMLButtonElement = document.getElementById( "startBtn" ) as HTMLButtonElement;
-        const hitBtn: HTMLButtonElement = document.getElementById( "hitBtn" ) as HTMLButtonElement;
-        const standBtn: HTMLButtonElement = document.getElementById( "standBtn" ) as HTMLButtonElement;
+    render( gameState: GameState ){
+        this.displayState( gameState.playerChips, gameState.playerHandValue, gameState.dealerHandValue );
+        this.setButtonStates( gameState.isRoundInProgress );
 
-        startBtn.addEventListener( "click", () => startRound() );
-        hitBtn.addEventListener( "click", () => takeHit() );
-        standBtn.addEventListener( "click", () => takeStand() );
+        this.removeCards( "player" );
+        this.displayCard( "player", gameState.playerHand );
+
+        this.removeCards( "dealer" );
+        this.displayCard( "dealer", gameState.dealerHand );
+
+        if( gameState.message.text === "" ){
+            this.messageHidden();
+        } else {
+            this.displayMessage( gameState.message.text, gameState.message.color );
+        }
     }
 
     displayState( chipsCount: number | "-", playerHandValue: number | "-", dealerHandValue: number | "-" ): void {
@@ -24,10 +38,9 @@ export class ViewController implements View {
         dealerHandValueText.innerText = dealerHandValue as string;
     }
     
-    createCardElement( card : Card ): HTMLImageElement{
+    createCardElement( card : Card ): HTMLImageElement {
         const cardImage: HTMLImageElement = document.createElement( 'img' ) as HTMLImageElement;
-
-        cardImage.src = `../assets/images/deck/${card.rank}_of_${card.suit}.svg`;
+        cardImage.src = `./images/deck/${card.rank}_of_${card.suit}.svg`;
         return cardImage;
     }
     
@@ -64,13 +77,13 @@ export class ViewController implements View {
         this.displayState( "-", "-", "-" );
     }
 
-    setButtonStates( startButtonDisable: boolean = true, hitButtonDisable: boolean = false, standButtonDisable: boolean = false ): void{
+    setButtonStates( isRoundInProgress: boolean ): void {
         const startBtn: HTMLButtonElement = document.getElementById( "startBtn" ) as HTMLButtonElement;
         const hitBtn: HTMLButtonElement = document.getElementById( "hitBtn" ) as HTMLButtonElement;
         const standBtn: HTMLButtonElement = document.getElementById( "standBtn" ) as HTMLButtonElement;
 
-        startBtn.disabled = startButtonDisable;
-        hitBtn.disabled = hitButtonDisable;
-        standBtn.disabled = standButtonDisable;
+        startBtn.disabled = isRoundInProgress;
+        hitBtn.disabled = !isRoundInProgress;
+        standBtn.disabled = !isRoundInProgress;
     }
 }

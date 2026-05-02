@@ -6,6 +6,14 @@ import deckConfig from '../config/deckConfig.json';
 
 enum Announcement { Bust, Blackjack, Win, Lose, Draw };
 
+type GameState = { "isRoundInProgress":boolean,
+                   "playerChips":number, 
+                   "playerHandValue":number, 
+                   "dealerHandValue":number, 
+                   "dealerHand":Card[], 
+                   "playerHand":Card[], 
+                   "message":{ text: string, color: 'red' | 'green' | 'orange' | '' } }
+
 export class Game {
     private player: Player;
     private dealer: Player;
@@ -25,8 +33,9 @@ export class Game {
         return this.player.handValue > gameConfig.maxValue;
     }
 
-    get state(): { "playerChips":number, "playerHandValue":number, "dealerHandValue":number, "dealerHand":Card[], "playerHand":Card[], "message":{ text: string, color: 'red' | 'green' | 'orange' | '' } } {
+    get state(): GameState {
         return {
+            "isRoundInProgress": this.isRoundInProgress,
             "playerChips": this.player.chips, 
             "playerHandValue": this.player.handValue, 
             "dealerHandValue": this.dealer.handValue,
@@ -41,11 +50,20 @@ export class Game {
         this.player.initRound();
         this.dealer.initRound();
         this.isRoundInProgress = true;
+        this.message = {text: "", color: ''};
+    }
+
+    newGame(): void {
+        this.player.initRound();
+        this.dealer.initRound();
+        this.player.setChip( gameConfig.playerChips );
+        this.isRoundInProgress = false;
+        this.message = {text: "", color: ''};
     }
 
     startRound(): void {
         if( this.isRoundInProgress ){
-            this.message = { text: "Már elindítottad a játékot, le kell játszanod egy kört!", color: "orange" };
+            this.message = { text: "Már elindítottad a játékot, le kell játszanod a kört!", color: "orange" };
             return;
         }
 
