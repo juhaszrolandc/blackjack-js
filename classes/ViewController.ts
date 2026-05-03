@@ -47,14 +47,18 @@ export class ViewController implements View {
     
     displayMessage( text: string, color: string ): void {
         const message: HTMLParagraphElement = document.getElementById( "message" ) as HTMLParagraphElement;
+        const messageBackground: HTMLDivElement = document.getElementById( "message-background" ) as HTMLDivElement;
         message.innerHTML = text;
         message.style.background = color;
         message.style.visibility = "visible";
+        messageBackground.style.visibility = "visible";
     }
     
     messageHidden(): void {
         const message: HTMLParagraphElement = document.getElementById( "message" ) as HTMLParagraphElement;
+        const messageBackground: HTMLDivElement = document.getElementById( "message-background" ) as HTMLDivElement;
         message.style.visibility = "hidden";
+        messageBackground.style.visibility = "hidden";
     }
 
     clear(): void {
