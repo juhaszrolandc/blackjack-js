@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Időjárás</title>
+        <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    </head>
+    <body>
+        City: <input type="text" id="city">
+        <button id="queryBtn">Show</button>
+        <div id = "weather" >
+            
+        </div>
+
+        <script>
+
+            const queryBtn = document.getElementById('queryBtn');
+            const weatherBox = document.getElementById('weather');
+            queryBtn.addEventListener('click', displayWeather );
+
+
+            async function displayWeather(){
+                weatherBox.innerHTML = "";
+                const city = document.getElementById('city').value;
+                const weather = await getWeatherInfo( city );
+
+                if( weather ){
+                    const temp = weather.main.temp;
+                    const description = weather.weather[0].description;
+                    const iconcode = weather.weather[0].icon;
+                    displayWeatherIcon( iconcode );
+                    displayDescription( description, temp );
+                } else {
+                    displayDescription( "Information is not available!" , "-" );
+                }
+            }
+
+            async function getWeatherInfo( city ){
+                const apiKey = 'a54ab8a84ab4316a1899dc9e65df3e27';
+                const baseURL = 'https://api.openweathermap.org/data/2.5/weather';
+                const URL = baseURL + '?q=' + city + '&appid=' + apiKey + '&units=metric';
+                
+                try {
+                    const weather = await $.get( URL );
+                    return weather;
+                } catch {
+                    return null;
+                }
+                
+            }
+
+            function displayWeatherIcon( iconcode ){
+                const iconurl = "https://openweathermap.org/payload/api/media/file/" + iconcode + ".png";
+                const icon = document.createElement('img');
+                icon.src = iconurl;
+                icon.style.float = "left";
+                weatherBox.appendChild( icon );
+            }
+
+            function displayDescription( description, temp ){
+                const text = document.createElement('p');
+                text.innerHTML = "The temperature: " + temp + "<br>" + description;
+                text.id = "description";
+                weatherBox.appendChild( text );
+            }
+
+        </script>
+
+    </body>
+</html>
