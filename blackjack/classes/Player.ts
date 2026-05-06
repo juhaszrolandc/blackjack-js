@@ -1,7 +1,11 @@
 import { Card } from './Card.js';
+import gameConfig from '../config/gameConfig.json';
 
-// A chace "no-store" azért kell, mert a böngésző a tesztelésnél nem frissült mindig megfelelően
-const gameConfig = await fetch( '../config/gameConfig.json', { cache: "no-store" } ).then( res => res.json() );
+function throwErrorIfNotNatural( number: number ): void {
+    if( !Number.isInteger( number ) || number < 0 ){
+        throw new Error( "Csak nem negatív egész szám használható!" );
+    }
+}
 
 export class Player {
     public chips: number;
@@ -10,10 +14,7 @@ export class Player {
     public hand: Card[];
 
     constructor( chipCount: number = 0 ){
-        if( !Number.isInteger( chipCount ) || chipCount < 0 ){
-            throw new Error( "A zsetonok száma kizárólag nem negatív egész szám lehet!" );
-        }
-
+        throwErrorIfNotNatural( chipCount );
         this.chips = chipCount;
         this.bet = 0;
         this.handValue = 0;
@@ -35,10 +36,7 @@ export class Player {
     }
 
     placeBet( bet: number ): number {
-        if( !Number.isInteger( bet ) || bet < 0 ){
-            throw new Error( "A tétnek nem negatív egész számnak kell lennie!" );
-        }
-
+        throwErrorIfNotNatural( bet );
         if( this.chips < bet ){
             throw new Error( `A playernek ${ this.chips } zsetonja van, nem lehet ${ bet } tétet rakni.` );
         }
@@ -49,11 +47,13 @@ export class Player {
     }
 
     addChip( chipCount: number ): void {
-        if( !Number.isInteger( chipCount ) || chipCount < 0 ){
-            throw new Error( "A zsetonok száma kizárólag nem negatív egész szám lehet!" );
-        }
-
+        throwErrorIfNotNatural( chipCount );
         this.chips += chipCount;
+    }
+
+    setChip( chipCount: number ): void {
+        throwErrorIfNotNatural( chipCount );
+        this.chips = chipCount;
     }
 
     addCard( card: Card ): void {

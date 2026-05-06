@@ -2,11 +2,12 @@
 <html lang="hu"><head>
 
     <meta charset="UTF-8">
-    <link rel="stylesheet" href="blackjack.css">
+    <link type="text/css" href="css/style.css" rel="stylesheet">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Black Jack Game</title>
 
     <script type="module">
-        import '../classes_build/Init.js';
+        import {} from "./script/Init.js";
     </script>
 
 </head><body>
@@ -35,9 +36,9 @@
     <p id="message"></p>
 
     <div id="buttonContainer">
-        <button id="hitBtn">Hit</button>
-        <button id="standBtn">Stand</button>
-        <button id="startBtn">Start Round</button>
+        <button id="hitBtn" disabled>Hit</button>
+        <button id="standBtn" disabled>Stand</button>
+        <button id="startBtn">New Round</button>
     </div>
 
 </body></html>

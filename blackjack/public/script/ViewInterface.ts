@@ -1,9 +1,8 @@
-import { Card } from './Card.js';
+import { Card } from '../../classes/Card.js';
 
 type Participant = "player" | "dealer";
 
 export interface View {
-    init( startRound: () => void, takeHit: () => void, takeStand: () => void ): void;
     
     displayState( chipsCount: number | "-", playerHandValue: number | "-", dealerHandValue: number | "-" ): void;
         

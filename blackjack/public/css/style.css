@@ -6,20 +6,39 @@ body {
 }
 
 /*MESSAGE*/
+
+#message-background{
+    position: fixed;
+    inset: 0;
+    z-index: 1;
+
+    visibility: hidden;
+    background-color: rgba(0, 0, 0, 0.4);
+    backdrop-filter: blur(2px);
+}
+
 #message {
-    font-size: 28px;
-    text-align: center;
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+
+    width: 100%;
     margin: 10px 0;
     padding: 20px;
+    
+    font-size: 16px;
+    text-align: center;
 }
 
 /*TABLE*/
 #tableContainer {
     display: flex;
-    justify-content: space-around;
-    align-items: flex-start;
+    justify-content: center;
+    flex-wrap: wrap;
     gap: 40px;
     padding: 20px;
+    visibility: hidden;
 }
 
 /*PLAYER / DEALER PANEL*/
@@ -28,8 +47,11 @@ body {
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    height: 350px;          /* fix magasság */
+
+    max-height: 350px;
+    width: 100%;
     width: 650px;
+
     padding: 15px 25px;
     border-radius: 15px;
     background: rgba(0, 0, 0, 0.4);
@@ -39,7 +61,7 @@ body {
 
 /*TEXT*/
 #leftSide p, #rightSide p {
-    font-size: 26px;
+    font-size: 16px;
     text-align: center;
     margin: 10px 0;
 }
@@ -81,6 +103,7 @@ body {
     background-color: black;
     left: 0;
     right: 0;
+    z-index: 3;
 }
 
 #buttonContainer button {
@@ -88,7 +111,7 @@ body {
     border: 0px;
     border-radius: 10px;
     padding: 12px 25px;
-    font-size: 18px;
+    font-size: 16px;
     cursor: pointer;
 }
 

@@ -1,29 +1,48 @@
 import { Player } from './Player.js';
-import { ViewController } from './ViewController.js';
+import { Card } from './Card.js';
 import { Deck } from './Deck.js';
+import gameConfig from '../config/gameConfig.json';
+import deckConfig from '../config/deckConfig.json';
 
-// A chace "no-store" azért kell, mert a böngésző a tesztelésnél nem frissült mindig megfelelően
-const gameConfig = await fetch( '../config/gameConfig.json', { cache: "no-store" } ).then( res => res.json() );
-const deckConfig = await fetch( '../config/deckConfig.json', { cache: "no-store" } ).then( res => res.json() );
 enum Announcement { Bust, Blackjack, Win, Lose, Draw };
+
+type GameState = { "isRoundInProgress":boolean,
+                   "playerChips":number, 
+                   "playerHandValue":number, 
+                   "dealerHandValue":number, 
+                   "dealerHand":Card[], 
+                   "playerHand":Card[], 
+                   "message":{ text: string, color: 'red' | 'green' | 'orange' | '' } }
 
 export class Game {
     private player: Player;
     private dealer: Player;
     private deck: Deck;
     private isRoundInProgress: boolean;
-    private view: ViewController;
+    private message: { text: string, color: 'red' | 'green' | 'orange' | '' };
 
-    constructor( view: ViewController ){
+    constructor(){
         this.player = new Player( gameConfig.playerChips );
         this.dealer = new Player( 0 );
         this.deck = new Deck( deckConfig );
         this.isRoundInProgress = false;
-        this.view = view;
+        this.message = {text: "", color: ''};
     }
 
     get isPlayerBust(): boolean {
         return this.player.handValue > gameConfig.maxValue;
+    }
+
+    get state(): GameState {
+        return {
+            "isRoundInProgress": this.isRoundInProgress,
+            "playerChips": this.player.chips, 
+            "playerHandValue": this.player.handValue, 
+            "dealerHandValue": this.dealer.handValue,
+            "dealerHand": this.dealer.hand,
+            "playerHand": this.player.hand,
+            "message": this.message
+        }
     }
 
     private initRound(): void {
@@ -31,55 +50,51 @@ export class Game {
         this.player.initRound();
         this.dealer.initRound();
         this.isRoundInProgress = true;
+        this.message = {text: "", color: ''};
+    }
+
+    newGame(): void {
+        this.player.initRound();
+        this.dealer.initRound();
+        this.player.setChip( gameConfig.playerChips );
+        this.isRoundInProgress = false;
+        this.message = {text: "", color: ''};
     }
 
     startRound(): void {
         if( this.isRoundInProgress ){
-            this.view.displayMessage( "Már elindítottad a játékot, le kell játszanod egy kört!" , "orange" );
+            this.message = { text: "Már elindítottad a játékot, le kell játszanod a kört!", color: "orange" };
             return;
         }
 
         if( this.player.chips <= 0 ){
-            this.view.displayMessage( "Elfogytak a zsetonok!", "red" );
+            this.message = { text: "Elfogytak a zsetonok!", color: "red" };
             return;
         }
 
         this.initRound();
+        this.message = { text: "", color: '' };
 
         // Szabály szerint a player tétet rak, és az osztó húz először lapot.
         this.player.placeBet( gameConfig.fixBet );
         this.dealer.addCard( this.deck.drawCard() );
         this.player.addCard( this.deck.drawCard() );
-
-        // Letakarítsuk az előző round maradványait.
-        this.view.messageHidden();
-        this.view.removeCards( "player" );
-        this.view.removeCards( "dealer" );
-
-        this.view.setButtonStates( true, false, false );
-        this.view.displayCard( "player", this.player.lastCard );
-        this.view.displayCard( "dealer", this.dealer.lastCard );
-        this.view.displayState( this.player.chips, this.player.handValue, this.dealer.handValue );
     }
 
     takeHit(): void {
         if( !this.isRoundInProgress ){
-            this.view.displayMessage( "Új kört kell indítanod, kattints a Start Round gombra!" , "orange" );
+            this.message = { text: "Új kört kell indítanod, kattints a Start Round gombra!", color: "orange" };
             return;
         }
 
-        this.player.addCard( this.deck.drawCard() );
 
-        // Ha korábban kiírtunk valamit, azt letakarítjuk (biztosan nem releváns).
-        this.view.messageHidden();
-        this.view.displayCard( "player", this.player.lastCard );
-        this.view.displayState( this.player.chips, this.player.handValue, this.dealer.handValue );
+        this.message = { text: "", color: '' };
+        this.player.addCard( this.deck.drawCard() );
 
         // Biztosan veszített a player, a játéknak vége.
         if( this.isPlayerBust ){
             const announcement: Announcement = this.settleRound();
-            this.displayAnnouncement( announcement );
-            this.view.setButtonStates( false, true, true );
+            this.setAnnouncementMessage( announcement );
             return;
         }
 
@@ -92,21 +107,14 @@ export class Game {
 
     takeStand(): void {
         if( !this.isRoundInProgress ){
-            this.view.displayMessage( "Új kört kell indítanod, kattints a Start Round gombra!" , "orange" );
+            this.message = { text: "Új kört kell indítanod, kattints a Start Round gombra!", color: "orange" };
             return;
         }
 
         // A dealernek eddig egy kártyája volt, itt 17-ig húzza a kártyákat.
         this.playDealerTurn();
         const announcement = this.settleRound();
-        
-        // A dealer összes kártyáját kirajzoljuk.
-        this.view.removeCards( "dealer" );
-        this.view.displayCard( "dealer", this.dealer.hand );
-
-        this.view.setButtonStates( false, true, true );
-        this.view.displayState( this.player.chips, this.player.handValue, this.dealer.handValue );
-        this.displayAnnouncement( announcement );
+        this.setAnnouncementMessage( announcement );
     }
 
     private playDealerTurn(): number {
@@ -148,26 +156,21 @@ export class Game {
         }
     }
 
-    private displayAnnouncement( announcement : Announcement ): void {
+    private setAnnouncementMessage( announcement : Announcement ): void {
         if( announcement === Announcement.Win ){
-            this.view.displayMessage( "Gratulálok, nyertél!", "green" );
+            this.message = { text: "Gratulálok, nyertél!", color: "green" };
 
         } else if( announcement === Announcement.Blackjack ){
-            this.view.displayMessage( "BLACKJACK! Nyertlél!", "green" )
+            this.message = { text: "BLACKJACK! Nyertlél!", color: "green" };
 
         } else if ( announcement === Announcement.Lose ){
-            this.view.displayMessage( "Sajnos vesztettél!", "red" );
+            this.message = { text: "Sajnos vesztettél!", color: "red" };
 
         } else if ( announcement === Announcement.Bust ){
-            this.view.displayMessage( "BUST! Vesztettél!", "red" );
+            this.message = { text: "BUST! Vesztettél!", color: "red" };
 
         } else if ( announcement === Announcement.Draw ){
-            this.view.displayMessage( "Döntetlen!", "orange" );
+            this.message = { text: "Döntetlen!", color: "orange" };
         }
-    }
-
-    displayInitialState(): void {
-        this.view.setButtonStates( false, true, true );
-        this.view.displayState( this.player.chips, this.player.handValue, this.dealer.handValue );
     }
 }
