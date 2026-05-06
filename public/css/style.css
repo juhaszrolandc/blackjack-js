@@ -20,6 +20,7 @@ body {
     align-items: flex-start;
     gap: 40px;
     padding: 20px;
+    visibility: hidden;
 }
 
 /*PLAYER / DEALER PANEL*/

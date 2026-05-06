@@ -12,6 +12,9 @@ type GameState = { "isRoundInProgress": boolean,
 
 export class ViewController implements View {
     render( gameState: GameState ){
+        const playerCards: HTMLElement = document.getElementById("tableContainer") as HTMLElement;
+        playerCards.style.visibility = "hidden";
+
         this.displayState( gameState.playerChips, gameState.playerHandValue, gameState.dealerHandValue );
         this.setButtonStates( gameState.isRoundInProgress );
 
@@ -26,6 +29,8 @@ export class ViewController implements View {
         } else {
             this.displayMessage( gameState.message.text, gameState.message.color );
         }
+        
+        playerCards.style.visibility = "visible";
     }
 
     displayState( chipsCount: number | "-", playerHandValue: number | "-", dealerHandValue: number | "-" ): void {
