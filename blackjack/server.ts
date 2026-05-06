@@ -1,12 +1,18 @@
 import express from "express";
+import { fileURLToPath } from 'url';
+import { dirname } from 'path';
 import { Game } from './classes_build/Game.js'
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
 
 const server: express.Application = express();
 const game: Game = new Game();
 
 server.listen(8000);
 server.set("view engine", "ejs");
-server.use(express.static("public"));
+server.use(express.static(__dirname +'\\public'));
+server.set('views', __dirname + '\\views');
 
 server.get('/', (request, response) => {
     response.render('index');
