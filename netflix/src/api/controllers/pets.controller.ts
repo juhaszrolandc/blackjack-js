@@ -29,6 +29,14 @@ let pets: Pet[] = [
 ];
 let creationId: number = 4;
 
+function rewritePetData(newPets: Pet[]){
+  pets = newPets
+  creationId = newPets.length+1;
+}
+
+function getPetData(){
+  return pets;
+}
 
 function getPets(req: Request, res: Response) {
   const type = String(req.query.type);
@@ -55,7 +63,9 @@ function deletePet(req: Request, res: Response) {
   res.status(204).end();
 }
 
-module.exports = {
+export {
+  rewritePetData,
+  getPetData,
   getPets,
   createPet,
   findPetById,
