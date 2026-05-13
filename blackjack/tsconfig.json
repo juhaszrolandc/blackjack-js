@@ -43,5 +43,5 @@
     "moduleDetection": "force",
     "skipLibCheck": true,
   },
-  "include": ["classes/**/*"]
+  "include": ["classes/**/*", "public/script/**/*"]
 }
