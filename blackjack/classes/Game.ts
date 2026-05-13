@@ -15,11 +15,11 @@ type GameState = { "isRoundInProgress":boolean,
                    "message":{ text: string, color: 'red' | 'green' | 'orange' | '' } }
 
 export class Game {
-    private player: Player;
-    private dealer: Player;
-    private deck: Deck;
-    private isRoundInProgress: boolean;
-    private message: { text: string, color: 'red' | 'green' | 'orange' | '' };
+    public player: Player;
+    public dealer: Player;
+    public deck: Deck;
+    public isRoundInProgress: boolean;
+    public message: { text: string, color: 'red' | 'green' | 'orange' | '' };
 
     constructor(){
         this.player = new Player( gameConfig.playerChips );
@@ -45,7 +45,7 @@ export class Game {
         }
     }
 
-    private initRound(): void {
+    public initRound(): void {
         this.deck.create( deckConfig );
         this.player.initRound();
         this.dealer.initRound();
@@ -117,7 +117,7 @@ export class Game {
         this.setAnnouncementMessage( announcement );
     }
 
-    private playDealerTurn(): number {
+    public playDealerTurn(): number {
         // Amikor a játékos Stand-ol, a bank addig húz új kártyákat, amíg 17-et vagy magasabbat ér el.
         while( this.deck.length > 0 && this.dealer.handValue < gameConfig.dealerStandValue ){
             this.dealer.addCard( this.deck.drawCard() );
@@ -126,7 +126,7 @@ export class Game {
         return this.dealer.handValue;
     }
 
-    private settleRound(): Announcement {
+    public settleRound(): Announcement {
         this.isRoundInProgress = false;
 
         // Ha a player 21 fölé megy, bust és veszít
@@ -156,7 +156,7 @@ export class Game {
         }
     }
 
-    private setAnnouncementMessage( announcement : Announcement ): void {
+    public setAnnouncementMessage( announcement : Announcement ): void {
         if( announcement === Announcement.Win ){
             this.message = { text: "Gratulálok, nyertél!", color: "green" };
 

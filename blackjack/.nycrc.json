@@ -1,0 +1,5 @@
+{ 
+  "all": true,
+  "include": ["test/*.test.ts"],
+  "report-dir": "./test/coverage_report" 
+}
