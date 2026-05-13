@@ -296,28 +296,28 @@ paths:
 
         - in: header
           name: title
-          description: New title
-          required: false
+          description: Title
+          required: true
           schema:
             type: string
 
         - in: header
           name: description
-          description: New movie description
-          required: false
+          description: Description
+          required: true
           schema:
             type: string
 
         - in: header
           name: directed-by
-          description: New director name
-          required: false
+          description: Director name
+          required: true
           schema:
             type: string
 
         - in: header
           name: actors
-          description: New actor list
+          description: Actor list
           required: false
           schema:
             type: array
@@ -326,7 +326,7 @@ paths:
 
         - in: header
           name: categories
-          description: New categorie list
+          description: Categorie list
           required: false
           schema:
             type: array
@@ -335,7 +335,7 @@ paths:
 
         - in: header
           name: type
-          description: Change movie type
+          description: Movie type (TV Show or Movie)
           required: false
           schema:
             type: string
