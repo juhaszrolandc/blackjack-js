@@ -1,4 +1,5 @@
 import { expect } from 'chai';
+import sinon from "sinon";
 import axios from 'axios';
 import '../../app';
 import { rewritePetData, getPetData } from '../../api/controllers/pets.controller';
@@ -42,7 +43,7 @@ describe('pets controller', () => {
             tags: ['purrfect'],
          }
     ];
-    
+
     before(()=>{
       rewritePetData(pets);
     });
@@ -91,6 +92,25 @@ describe('pets controller', () => {
 
       expect(response.status).to.equal(204);
     });
+
+    it('should delete the animal which has id 1', async () => {
+      const petID: number = 1;
+      const animalsCountBeforeDelete = getPetData().length;
+      const response: any = await instance.delete(`/pets/${petID}`);
+      const animalsCountAfterDelete = getPetData().length;
+
+      expect(animalsCountAfterDelete).to.equal(animalsCountBeforeDelete-1);
+    });
+
+    it('should\'nt delete an animal', async () => {
+      const petID: number = 999;
+      const animalsCountBeforeDelete = getPetData().length;
+      const response: any = await instance.delete(`/pets/${petID}`);
+      const animalsCountAfterDelete = getPetData().length;
+
+      expect(animalsCountAfterDelete).to.equal(animalsCountBeforeDelete);
+    });
+
   });
 
   describe('GET /pets', () => {
@@ -148,8 +168,7 @@ describe('pets controller', () => {
   });
   
   describe('POST /pets', () => {
-    const newAnimal: Pet = {
-        id: 1,
+    const newAnimal = {
         name: 'noname',
         type: 'cat',
         tags: ['cute']
@@ -159,11 +178,19 @@ describe('pets controller', () => {
       rewritePetData([]);
     });
 
-    it('shold be return 400', async ()=>{
+    it('shold be return 200', async ()=>{
       const response: any = await instance.post('/pets', newAnimal);
 
-      expect(response.status).to.equal(400);
+      expect(response.status).to.equal(200);
     });
+
+    it('should put a new animal into the array', async ()=>{
+      const response: any = await instance.post('/pets', newAnimal);
+      const animal = getPetData().find(pet => pet.name === newAnimal.name);
+
+      expect(animal).does.not.undefined;
+    });
+
   })
 
 });
