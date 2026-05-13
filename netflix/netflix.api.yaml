@@ -16,6 +16,680 @@ paths:
       description: Create a new user
       operationId: createUser
       x-eov-operation-handler: api/controllers/netflix.controller
+      parameters:
+        - in: header
+          name: username
+          description: The username
+          required: true
+          schema:
+            type: string
 
-  /video:
-    get: # title param
+        - in: header
+          name: password
+          description: The password
+          required: true
+          schema:
+            type: string
+
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                example:
+                  message: Account has been successfully created
+
+        "500":
+          description: Unexpected error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                example:
+                  message: Unexpected error
+
+  /user/login:
+    get:
+      description: User login
+      operationId: login
+      x-eov-operation-handler: api/controllers/netflix.controller
+      parameters:
+        - in: header
+          name: username
+          description: The username
+          required: true
+          schema:
+            type: string
+
+        - in: header
+          name: password
+          description: The password
+          required: true
+          schema:
+            type: string
+
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  session-id:
+                    type: integer
+                    format: uuid
+                example:
+                  session-id: 463294932
+
+        "400":
+          description: Invalid username or password
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                example:
+                  message: Invalid username or password, please double-check your login details and try again.
+
+        "500":
+          description: Unexpected error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                example:
+                  message: Unexpected error
+       
+  /user/logout:
+    get:
+      description: User logout
+      operationId: logout
+      x-eov-operation-handler: api/controllers/netflix.controller
+      parameters:
+          - in: header
+            name: X-Session-ID
+            description: The user must have an authentication ID for account operations.
+            required: true
+            schema:
+              type: string
+              format: uuid
+      
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                example:
+                  message: Logout successfully
+
+        "500":
+          description: Unexpected error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                example:
+                  message: Unexpected error    
+  
+  /user/movies:
+    get:
+      description: List movies rented by user
+      operationId: userMovies
+      x-eov-operation-handler: api/controllers/netflix.controller
+      parameters:
+          - in: header
+            name: X-Session-ID
+            description: The user must have an authentication ID for account operations.
+            required: true
+            schema:
+              type: string
+              format: uuid
+
+          - in: query
+            name: order
+            description: The user can order the list by ID.
+            required: true
+            schema:
+              type: boolean
+              default: false
+
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                 $ref: "#/components/schemas/MovieArray"
+
+        "400":
+          description: Invalid session ID
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                example:
+                  message: Please login!
+
+        "500":
+          description: Unexpected error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                example:
+                  message: Unexpected error
+      
+  /movie:
+    get:
+      description: Get movie by title or id
+      operationId: findMovie
+      x-eov-operation-handler: api/controllers/netflix.controller
+      parameters:
+        - in: header
+          name: X-Session-ID
+          description: The user must have an authentication ID for account operations
+          required: true
+          schema:
+            type: string
+            format: uuid
+
+        - in: query
+          name: title
+          description: The title of the movie.
+          required: false
+          schema:
+            type: string
+
+        - in: query
+          name: id
+          description: The ID of the movie.
+          required: false
+          schema:
+            type: string
+
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: "#/components/schemas/Movie"
+                  - $ref: "#/components/schemas/MovieArray"
+
+        "404":
+          description: Not found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                example:
+                  message: No movies found!
+
+        "400":
+          description: Invalid session ID
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                example:
+                  message: Please login!
+
+        "500":
+          description: Unexpected error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                example:
+                  message: Unexpected error
+
+    post:
+      description: Create movie
+      operationId: createMovie
+      x-eov-operation-handler: api/controllers/netflix.controller
+      parameters:
+        - in: header
+          name: X-Admin-API-key
+          description: The user must have an admin-api-key for admin operations.
+          required: true
+          schema:
+            type: string
+            format: uuid
+
+        - in: header
+          name: title
+          description: New title
+          required: false
+          schema:
+            type: string
+
+        - in: header
+          name: description
+          description: New movie description
+          required: false
+          schema:
+            type: string
+
+        - in: header
+          name: directed-by
+          description: New director name
+          required: false
+          schema:
+            type: string
+
+        - in: header
+          name: actors
+          description: New actor list
+          required: false
+          schema:
+            type: array
+            items:
+              type: string
+
+        - in: header
+          name: categories
+          description: New categorie list
+          required: false
+          schema:
+            type: array
+            items:
+              type: string
+
+        - in: header
+          name: type
+          description: Change movie type
+          required: false
+          schema:
+            type: string
+            pattern: '^(TV Show|Movie)$'
+
+      responses:
+          "200":
+            description: OK
+            content:
+              application/json:
+                schema:
+                  $ref: "#/components/schemas/Movie"
+
+          "400":
+            description: Invalid API Key
+            content:
+              application/json:
+                schema:
+                  type: object
+                  properties:
+                    message:
+                      type: string
+                  example:
+                    message: Invalid admin key!
+
+          "500":
+            description: Unexpected error
+            content:
+              application/json:
+                schema:
+                  type: object
+                  properties:
+                    message:
+                      type: string
+                  example:
+                    message: Unexpected error
+
+    delete:
+      description: Delete movie
+      operationId: deleteMovie
+      x-eov-operation-handler: api/controllers/netflix.controller
+      parameters:
+        - in: header
+          name: X-Admin-API-key
+          description: The user must have an admin-api-key for admin operations.
+          required: true
+          schema:
+            type: string
+            format: uuid
+        
+        - in: query
+          name: id
+          description: The ID of the movie you want to delete.
+          required: true
+          schema:
+            type: string
+
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                example:
+                  message: You deleted the movie successfully.
+
+        "404":
+          description: Not found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                example:
+                  message: No movies found with this id.
+
+        "400":
+          description: Invalid API Key
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                example:
+                  message: Invalid admin key!
+
+        "500":
+          description: Unexpected error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                example:
+                  message: Unexpected error
+
+    patch:
+      description: Update movie
+      operationId: updateMovie
+      x-eov-operation-handler: api/controllers/netflix.controller
+      parameters:
+        - in: header
+          name: X-Admin-API-key
+          description: The user must have an admin-api-key for admin operations.
+          required: true
+          schema:
+            type: string
+            format: uuid
+
+        - in: query
+          name: id
+          description: The ID of the movie you want to update.
+          required: true
+          schema:
+            type: string
+
+        - in: header
+          name: title
+          description: New title
+          required: false
+          schema:
+            type: string
+
+        - in: header
+          name: description
+          description: New movie description
+          required: false
+          schema:
+            type: string
+
+        - in: header
+          name: directed-by
+          description: New director name
+          required: false
+          schema:
+            type: string
+
+        - in: header
+          name: actors
+          description: New actor list
+          required: false
+          schema:
+            type: array
+            items:
+              type: string
+
+        - in: header
+          name: categories
+          description: New categorie list
+          required: false
+          schema:
+            type: array
+            items:
+              type: string
+
+        - in: header
+          name: type
+          description: Change movie type
+          required: false
+          schema:
+            type: string
+            pattern: '^(TV Show|Movie)$'
+
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Movie"
+
+        "404":
+          description: Not found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                example:
+                  message: No movies found with this id.
+
+        "400":
+          description: Invalid API Key
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                example:
+                  message: Invalid admin key!
+
+        "500":
+          description: Unexpected error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                example:
+                  message: Unexpected error
+
+  /video/rent/{id}:
+    get:
+      description: Rent a movie by ID
+      operationId: rentMovieByID
+      x-eov-operation-handler: api/controllers/netflix.controller
+      parameters:
+        - in: header
+          name: X-Session-ID
+          description: The user must have an authentication ID for account operations.
+          required: true
+          schema:
+            type: string
+            format: uuid
+
+        - in: path
+          name: id
+          description: The ID of the movie.
+          required: true
+          schema:
+            type: string
+
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                example:
+                  message: You rented the movie successfully.
+
+        "404":
+          description: Not found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                example:
+                  message: No movies found with this id.
+
+        "400":
+          description: Invalid session ID
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                example:
+                  message: Please login!
+
+        "500":
+          description: Unexpected error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                example:
+                  message: Unexpected error
+
+
+
+
+components:
+  schemas:
+    Movie:
+      type: object
+      properties:
+        title:
+          type: string
+        description:
+          type: string
+        directed-by:
+          type: string
+        actors:
+          type: array
+          items:
+            type: string
+        categories:
+          type: array
+          items:
+            type: string
+        type:
+          type: string
+          pattern: '^(TV Show|Movie)$'
+        id:
+          type: integer
+
+      example:
+        title: "Transformers"
+        description: "Transformers (2007) is a high-octane science fiction action film directed by Michael Bay, focusing on a war between two factions of alien robots—the heroic Autobots and evil Decepticons—who arrive on Earth searching for the AllSpark, a powerful artifact."
+        directed-by: Michael Bay
+        actors: [Shia LaBeouf, Megan Fox]
+        categories: [sci-fi, action]
+        type: Movie
+        id: 3
+
+    MovieArray:
+      type: array
+      items:
+            type: object
+            properties:
+              title:
+                type: string
+              description:
+                type: string
+              directed-by:
+                type: string
+              actors:
+                type: array
+                items:
+                  type: string
+              categories:
+                type: array
+                items:
+                  type: string
+              type:
+                type: string
+                pattern: '^(TV Show|Movie)$'
+              id:
+                type: integer
+
+            example:
+              title: "Transformers"
+              description: "Transformers (2007) is a high-octane science fiction action film directed by Michael Bay, focusing on a war between two factions of alien robots—the heroic Autobots and evil Decepticons—who arrive on Earth searching for the AllSpark, a powerful artifact."
+              directed-by: Michael Bay
+              actors: [Shia LaBeouf, Megan Fox]
+              categories: [sci-fi, action]
+              type: Movie
+              id: 3
