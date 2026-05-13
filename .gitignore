@@ -2,4 +2,3 @@ blackjack/classes_build/
 netflix/dist
 *.js
 */node_modules
-*/coverage_report
