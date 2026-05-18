@@ -16,20 +16,12 @@ paths:
       description: Create a new user
       operationId: createUser
       x-eov-operation-handler: api/controllers/netflix.controller
-      parameters:
-        - in: header
-          name: username
-          description: The username
-          required: true
-          schema:
-            type: string
-
-        - in: header
-          name: password
-          description: The password
-          required: true
-          schema:
-            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UsernameAndPassword"
 
       responses:
         "200":
@@ -57,24 +49,16 @@ paths:
                   message: Unexpected error
 
   /user/login:
-    get:
+    post:
       description: User login
       operationId: login
       x-eov-operation-handler: api/controllers/netflix.controller
-      parameters:
-        - in: header
-          name: username
-          description: The username
-          required: true
-          schema:
-            type: string
-
-        - in: header
-          name: password
-          description: The password
-          required: true
-          schema:
-            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UsernameAndPassword"
 
       responses:
         "200":
@@ -88,7 +72,7 @@ paths:
                     type: integer
                     format: uuid
                 example:
-                  session-id: 463294932
+                  session-id: 123e4567-e89b-12d3-a456-426614174000
 
         "400":
           description: Invalid username or password
@@ -115,7 +99,7 @@ paths:
                   message: Unexpected error
        
   /user/logout:
-    get:
+    post:
       description: User logout
       operationId: logout
       x-eov-operation-handler: api/controllers/netflix.controller
@@ -153,9 +137,9 @@ paths:
                 example:
                   message: Unexpected error    
   
-  /user/movies:
+  /queue:
     get:
-      description: List movies rented by user
+      description: List movies queue rented by the user
       operationId: userMovies
       x-eov-operation-handler: api/controllers/netflix.controller
       parameters:
@@ -293,53 +277,12 @@ paths:
           schema:
             type: string
             format: uuid
-
-        - in: header
-          name: title
-          description: Title
-          required: true
-          schema:
-            type: string
-
-        - in: header
-          name: description
-          description: Description
-          required: true
-          schema:
-            type: string
-
-        - in: header
-          name: directed-by
-          description: Director name
-          required: true
-          schema:
-            type: string
-
-        - in: header
-          name: actors
-          description: Actor list
-          required: false
-          schema:
-            type: array
-            items:
-              type: string
-
-        - in: header
-          name: categories
-          description: Categorie list
-          required: false
-          schema:
-            type: array
-            items:
-              type: string
-
-        - in: header
-          name: type
-          description: Movie type (TV Show or Movie)
-          required: false
-          schema:
-            type: string
-            pattern: '^(TV Show|Movie)$'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/newMovie"
 
       responses:
           "200":
@@ -455,59 +398,12 @@ paths:
             type: string
             format: uuid
 
-        - in: query
-          name: id
-          description: The ID of the movie you want to update.
-          required: true
-          schema:
-            type: string
-
-        - in: header
-          name: title
-          description: New title
-          required: false
-          schema:
-            type: string
-
-        - in: header
-          name: description
-          description: New movie description
-          required: false
-          schema:
-            type: string
-
-        - in: header
-          name: directed-by
-          description: New director name
-          required: false
-          schema:
-            type: string
-
-        - in: header
-          name: actors
-          description: New actor list
-          required: false
-          schema:
-            type: array
-            items:
-              type: string
-
-        - in: header
-          name: categories
-          description: New categorie list
-          required: false
-          schema:
-            type: array
-            items:
-              type: string
-
-        - in: header
-          name: type
-          description: Change movie type
-          required: false
-          schema:
-            type: string
-            pattern: '^(TV Show|Movie)$'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/Movie"
 
       responses:
         "200":
@@ -553,7 +449,7 @@ paths:
                 example:
                   message: Unexpected error
 
-  /video/rent/{id}:
+  /movie/{id}/rent:
     get:
       description: Rent a movie by ID
       operationId: rentMovieByID
@@ -623,11 +519,58 @@ paths:
                 example:
                   message: Unexpected error
 
-
-
-
 components:
   schemas:
+    UsernameAndPassword:
+      type: object
+      required:
+        - username
+        - password
+      properties:
+        username:
+          type: string
+          description: The username
+        password:
+          type: string
+          description: The password
+      example:
+        username: roland
+        password: password123
+
+    newMovie:
+      type: object
+      properties:
+        title:
+          type: string
+        description:
+          type: string
+        directed-by:
+          type: string
+        actors:
+          type: array
+          items:
+            type: string
+        categories:
+          type: array
+          items:
+            type: string
+        type:
+          type: string
+          enum:
+            - TV Show
+            - Movie
+      required:
+            - title
+            - description
+            - type
+      example:
+        title: "Transformers"
+        description: "Transformers (2007) is a high-octane science fiction action film directed by Michael Bay, focusing on a war between two factions of alien robots—the heroic Autobots and evil Decepticons—who arrive on Earth searching for the AllSpark, a powerful artifact."
+        directed-by: Michael Bay
+        actors: [Shia LaBeouf, Megan Fox]
+        categories: [sci-fi, action]
+        type: Movie
+
     Movie:
       type: object
       properties:
@@ -647,9 +590,16 @@ components:
             type: string
         type:
           type: string
-          pattern: '^(TV Show|Movie)$'
+          enum:
+            - TV Show
+            - Movie
         id:
           type: integer
+      required:
+            - id
+            - title
+            - description
+            - type
 
       example:
         title: "Transformers"
@@ -681,7 +631,9 @@ components:
                   type: string
               type:
                 type: string
-                pattern: '^(TV Show|Movie)$'
+                enum:
+                  - TV Show
+                  - Movie
               id:
                 type: integer
 
