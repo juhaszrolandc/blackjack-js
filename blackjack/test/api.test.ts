@@ -56,8 +56,8 @@ describe('Blackjack API', async () => {
             .atLeast(4)
             .onFirstCall().returns(new Card('hearts', 'ace', 11))
             .onSecondCall().returns(new Card('spades', 'ace', 11))
-            .onThirdCall().returns(new Card('diamonds', 'ten', 10)) // player hit
-            .returns(new Card('clubs', 'two', 2)); // dealer draw cards
+            .onThirdCall().returns(new Card('diamonds', 'ten', 10))
+            .returns(new Card('clubs', 'two', 2));
             
             await instance.get('/new-game');
             await instance.get('/new-round');
@@ -69,7 +69,7 @@ describe('Blackjack API', async () => {
             expect(response.status).to.equal(200);
             expect(gameState.playerHandValue).to.equal(21);
             expect(gameState.isRoundInProgress).to.be.false;
-            expect(gameState.dealerHand.length).to.equal(4); // 11+2+2+2
+            expect(gameState.dealerHand.length).to.equal(4);
             expect(gameState.playerHand.length).to.equal(2);
             expect(gameState.message.text).to.match(/blackjack/i);
         });
@@ -78,7 +78,7 @@ describe('Blackjack API', async () => {
             const deckMock = sinon.mock(game.deck);
             deckMock.expects('drawCard')
             .atLeast(4)
-            .returns(new Card('diamonds', 'ten', 10)) // player hit
+            .returns(new Card('diamonds', 'ten', 10))
             
             await instance.get('/new-game');
             await instance.get('/new-round');
