@@ -34,18 +34,18 @@ function rewritePetData(newPets: Pet[]){
   creationId = newPets.length+1;
 }
 
-function getPetData(){
-  return pets;
-}
-
 function getPets(req: Request, res: Response) {
   const type = String(req.query.type);
   const limit = Number(req.query.limit);
-  const filteredPetsByType = pets.filter(pet => pet.type === type).slice(0, limit);
-  const tags = Array(req.query.tags);
-  let result = Array();
+  const tags = req.query.tags as string[];
+
+  let filteredPets = pets.filter(pet => pet.type === type).slice(0, limit);
+
+  if(tags){
+    filteredPets = filteredPets.filter(pet => tags.some(tag => pet.tags.includes(tag)));
+  }
   
-  res.json(result);
+  res.json(filteredPets);
 }
 
 function createPet(req: Request, res: Response) {
@@ -68,7 +68,6 @@ function deletePet(req: Request, res: Response) {
 
 export {
   rewritePetData,
-  getPetData,
   getPets,
   createPet,
   findPetById,

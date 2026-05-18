@@ -1,8 +1,7 @@
 import { expect } from 'chai';
-import sinon from "sinon";
 import axios from 'axios';
 import '../../app';
-import { rewritePetData, getPetData } from '../../api/controllers/pets.controller';
+import { rewritePetData } from '../../api/controllers/pets.controller';
 
 type Pet = {
   id: number;
@@ -11,196 +10,101 @@ type Pet = {
   tags: string[];
 }
 
-/* 
-   A pets.controller.ts-ben lévő pets tömböt kellene mockolni ezekhez a tesztekhez.
-   De nem tudom hogyan lehet ezt itt "szépen csinálni".
-*/
-describe('pets controller', () => {
+describe('Pets Controller', () => {
   const instance = axios.create({
     baseURL: 'http://localhost:3000/v1',
     validateStatus: undefined
   });
 
-  describe('GET /pets/{id}', () => {
+  beforeEach(() => {
+    rewritePetData([]);
+  });
 
-    const pets: Pet[] = [
-         {
-            id: 1,
-            name: 'buzz1',
-            type: 'dog',
-            tags: ['purrfect'],
-         },
-         {
-            id: 2,
-            name: 'buzz2',
-            type: 'dog',
-            tags: ['purrfect'],
-         },
-         {
-            id: 3,
-            name: 'buzz3',
-            type: 'dog',
-            tags: ['purrfect'],
-         }
-    ];
+  describe('POST /pets', () => {
+    it('should create a new pet and return 200 with the created object', async () => {
+      const newAnimal = { name: 'Fluffy', type: 'cat', tags: ['cute'] };
 
-    before(()=>{
-      rewritePetData(pets);
-    });
-
-    it('should return status 404', async () => {
-      const petID: number = 4;
-      const response: any = await instance.get(`/pets/${petID}`);
-
-      expect(response.status).to.equal(404);
-    });
-
-    it('should return 200', async () => {
-      const petID: number = 1;
-      const response: any = await instance.get(`/pets/${petID}`);
+      const response = await instance.post('/pets', newAnimal);
 
       expect(response.status).to.equal(200);
-    })
+      expect(response.data.id).to.not.be.undefined;
+      expect(response.data.name).to.equal(newAnimal.name);
+      expect(response.data.type).to.equal(newAnimal.type);
+      expect(response.data.tags).to.deep.equal(newAnimal.tags);
+    });
+  });
 
-    it('should return a pet with ID 1', async () => {
-      const petID: number = 1;
-      const response: any = await instance.get(`/pets/${petID}`);
-      const pet1 = pets.find(pet => pet.id === 1);
-      expect(response.data).to.deep.equal(pet1);
+  describe('GET /pets/{id}', () => {
+    it('should return status 404 if the pet does not exist', async () => {
+      const response = await instance.get('/pets/999');
+      
+      expect(response.status).to.equal(404);
+      expect(response.data.message).to.equal('not found');
     });
 
+    it('should return 200 and the correct pet after creating it', async () => {
+      const newAnimal = { name: 'Sparky', type: 'dog', tags: ['sweet'] };
+      const postResponse = await instance.post('/pets', newAnimal);
+      const createdId = postResponse.data.id;
+
+      const getResponse = await instance.get(`/pets/${createdId}`);
+
+      expect(getResponse.status).to.equal(200);
+      expect(getResponse.data).to.deep.equal(postResponse.data);
+    });
   });
 
   describe('DELETE /pets/{id}', () => {
+    it('should return status 204 when successfully deleting an existing pet', async () => {
+      const postResponse = await instance.post('/pets', { name: 'Buzz', type: 'cat', tags: [] });
+      const createdId = postResponse.data.id;
 
-    const pets: Pet[] = [
-      {
-        id: 1,
-        name: 'buzz1',
-        type: 'dog',
-        tags: ['purrfect'],
-      }
-    ];
-    
-    beforeEach(()=>{
-      rewritePetData(pets);
+      const deleteResponse = await instance.delete(`/pets/${createdId}`);
+      expect(deleteResponse.status).to.equal(204);
+
+      const getResponse = await instance.get(`/pets/${createdId}`);
+      expect(getResponse.status).to.equal(404);
     });
 
-    it('should return status 204', async () => {
-      const petID: number = 1;
-      const response: any = await instance.delete(`/pets/${petID}`);
-
+    it('should return 204 even if the pet to delete does not exist', async () => {
+      const response = await instance.delete('/pets/999');
       expect(response.status).to.equal(204);
     });
-
-    it('should delete the animal which has id 1', async () => {
-      const petID: number = 1;
-      const animalsCountBeforeDelete = getPetData().length;
-      const response: any = await instance.delete(`/pets/${petID}`);
-      const animalsCountAfterDelete = getPetData().length;
-
-      expect(animalsCountAfterDelete).to.equal(animalsCountBeforeDelete-1);
-    });
-
-    it('should\'nt delete an animal', async () => {
-      const petID: number = 999;
-      const animalsCountBeforeDelete = getPetData().length;
-      const response: any = await instance.delete(`/pets/${petID}`);
-      const animalsCountAfterDelete = getPetData().length;
-
-      expect(animalsCountAfterDelete).to.equal(animalsCountBeforeDelete);
-    });
-
   });
 
   describe('GET /pets', () => {
-    const pets: Pet[] = [
-         {
-            id: 1,
-            name: 'buzz1',
-            type: 'dog',
-            tags: ['sweet'],
-         },
-         {
-            id: 2,
-            name: 'buzz2',
-            type: 'dog',
-            tags: ['cute'],
-         },
-         {
-            id: 3,
-            name: 'buzz3',
-            type: 'dog',
-            tags: ['sweet', 'cute'],
-         }
-    ];
+    it('should return limited number of animals filtered by type', async () => {
+      await instance.post('/pets', { name: 'dog1', type: 'dog', tags: [] });
+      await instance.post('/pets', { name: 'dog2', type: 'dog', tags: [] });
+      await instance.post('/pets', { name: 'cat1', type: 'cat', tags: [] });
 
-    before(()=>{
-      rewritePetData(pets);
-    });
-
-    it('should return 200', async () => {
-      const type: string = "dog";
-      const limit: number = 2;
-      const response: any = await instance.get(`/pets?type=${type}&limit=${limit}`);
+      const type = 'dog';
+      const limit = 1;
+      const response = await instance.get(`/pets?type=${type}&limit=${limit}`);
 
       expect(response.status).to.equal(200);
+      expect(response.data).to.be.an('array');
+      expect(response.data.length).to.equal(limit);
+      
+      const allDogs = response.data.every((pet: Pet) => pet.type === 'dog');
+      expect(allDogs).to.be.true;
     });
 
-    it('should return limited number of animals', async () => {
-      const type: string = "dog";
-      const limit: number = 2;
-      const response: any = await instance.get(`/pets?type=${type}&limit=${limit}`);
-      const countOfAnimals: number = response.data.length;
+    it('should return animals filtered by tags', async () => {
+      await instance.post('/pets', { name: 'dog1', type: 'dog', tags: ['sweet'] });
+      await instance.post('/pets', { name: 'dog2', type: 'dog', tags: ['cute', 'sweet'] });
+      await instance.post('/pets', { name: 'dog3', type: 'dog', tags: ['cute'] });
 
-      expect(countOfAnimals).to.be.lessThanOrEqual(limit);
+      const type = 'dog';
+      const limit = 10;
+      const tags = ['sweet'];
+      const response = await instance.get(`/pets?type=${type}&limit=${limit}&tags=${tags.join(',')}`);
+
+      expect(response.status).to.equal(200);
+      
+      const allHaveSweetTag = response.data.every((pet: Pet) => pet.tags.includes('sweet'));
+      expect(allHaveSweetTag).to.be.true;
     });
-
-    it('should return limited number of dogs', async () => {
-      const type: string = "dog";
-      const limit: number = 1;
-      const response: any = await instance.get(`/pets?type=${type}&limit=${limit}`);
-      const countOfDogs: number = response.data.filter((pet: Pet) => pet.type === "dog").length;
-
-      expect(countOfDogs).to.be.lessThanOrEqual(limit);
-    });
-
-    it('should return animals which has sweet tag', async () => {
-      const type: string = "dog";
-      const limit: number = 3;
-      const tags: string[] = ["sweet"];
-      const response: any = await instance.get(`/pets?type=${type}&limit=${limit}&tags=${tags}`);
-      const dogs: string[] = response.data.filter((pet: Pet) => pet.tags.includes("sweet"));
-
-      expect(response.data).to.deep.equal(dogs);
-    });
-
   });
-  
-  describe('POST /pets', () => {
-    const newAnimal = {
-        name: 'noname',
-        type: 'cat',
-        tags: ['cute']
-    };
-
-    beforeEach(()=>{
-      rewritePetData([]);
-    });
-
-    it('shold be return 200', async ()=>{
-      const response: any = await instance.post('/pets', newAnimal);
-
-      expect(response.status).to.equal(200);
-    });
-
-    it('should put a new animal into the array', async ()=>{
-      const response: any = await instance.post('/pets', newAnimal);
-      const animal = getPetData().find(pet => pet.name === newAnimal.name);
-
-      expect(animal).does.not.undefined;
-    });
-
-  })
 
 });
