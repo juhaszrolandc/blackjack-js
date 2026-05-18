@@ -3,53 +3,113 @@ import sinon from "sinon";
 import mocha from "mocha";
 import axios from 'axios';
 import { game } from "../server.js";
+import { response } from 'express';
+import { Card } from '../classes_build/Card.js';
 
-describe('GET /new-game', async () => {
+describe('Blackjack API', async () => {
 
     const instance = axios.create({
         baseURL: 'http://localhost:8000/',
         validateStatus: undefined
     });
 
-    it('should call the player init method', async () => {
-        const playerMock = sinon.mock(game.player);
-        playerMock.expects('initRound').once();
+    describe('GET /new-game', () => {
+        it('should restore the game state', async () => {
+            const newGameState = {
+                "isRoundInProgress": false,
+                "playerChips": 10, 
+                "playerHandValue": 0, 
+                "dealerHandValue": 0,
+                "dealerHand": [],
+                "playerHand": [],
+                "message": {text: "", color: ""}
+            }
 
-        await instance.get('/new-game');
+            const response = await instance.get('/new-game');
+            const gameState = response.data;
 
-        playerMock.verify();
-        playerMock.restore();
+            expect(response.status).to.equal(200);
+            expect(gameState).to.deep.equal(newGameState); 
+        });
+    });
+    
+    describe('GET /new-round', () => {
+        it('should start a new round', async () => {
+            await instance.get('/new-game');
+            const response = await instance.get('/new-round');
+            const gameState = response.data;
+
+            expect(response.status).to.equal(200);
+            expect(gameState.isRoundInProgress).to.be.true;
+            expect(gameState.dealerHand.length).to.equal(1);
+            expect(gameState.playerHand.length).to.equal(1);
+            expect(gameState.dealerHandValue).to.greaterThan(0);
+            expect(gameState.playerHandValue).to.greaterThan(0);
+            expect(gameState.playerChips).to.equal(9);
+        });
     });
 
-    it('should call the dealer init method', async () => {
-        const dealerMock = sinon.mock(game.dealer);
-        dealerMock.expects('initRound').once();
+    describe('GET /hit', () => {
+        it('should be Blackjack', async () => {
+            const deckMock = sinon.mock(game.deck);
+            deckMock.expects('drawCard')
+            .atLeast(4)
+            .onFirstCall().returns(new Card('hearts', 'ace', 11))
+            .onSecondCall().returns(new Card('spades', 'ace', 11))
+            .onThirdCall().returns(new Card('diamonds', 'ten', 10)) // player hit
+            .returns(new Card('clubs', 'two', 2)); // dealer draw cards
+            
+            await instance.get('/new-game');
+            await instance.get('/new-round');
+            const response = await instance.get('/hit');
+            const gameState = response.data;
 
-        await instance.get('/new-game');
+            deckMock.verify();
+            deckMock.restore();
+            expect(response.status).to.equal(200);
+            expect(gameState.playerHandValue).to.equal(21);
+            expect(gameState.isRoundInProgress).to.be.false;
+            expect(gameState.dealerHand.length).to.equal(4); // 11+2+2+2
+            expect(gameState.playerHand.length).to.equal(2);
+            expect(gameState.message.text).to.match(/blackjack/i);
+        });
 
-        dealerMock.verify();
-        dealerMock.restore();
+        it('should be Bust', async () => {
+            const deckMock = sinon.mock(game.deck);
+            deckMock.expects('drawCard')
+            .atLeast(4)
+            .returns(new Card('diamonds', 'ten', 10)) // player hit
+            
+            await instance.get('/new-game');
+            await instance.get('/new-round');
+            await instance.get('/hit');
+            const response = await instance.get('/hit');
+            const gameState = response.data;
+
+            deckMock.verify();
+            deckMock.restore();
+            expect(response.status).to.equal(200);
+            expect(gameState.playerHandValue).to.equal(30);
+            expect(gameState.isRoundInProgress).to.be.false;
+            expect(gameState.dealerHand.length).to.equal(1);
+            expect(gameState.playerHand.length).to.equal(3);
+            expect(gameState.message.text).to.match(/bust/i);
+        });
     });
 
-    it('should have 52 cards in the deck', async () => {
-        await instance.get('/new-game');
+    describe('GET /stand', () => {
+        it('should be settle the round', async () => {
+            await instance.get('/new-game');
+            await instance.get('/new-round');
+            await instance.get('/hit');
+            const response = await instance.get('/stand');
+            const gameState = response.data;
 
-        expect(game.deck.length).to.equal(52); 
+            expect(response.status).to.be.equal(200);
+            expect(gameState.message.text).not.to.be.equal("");
+            expect(gameState.isRoundInProgress).to.be.false;
+            expect(gameState.dealerHandValue).to.be.greaterThanOrEqual(17);
+            expect(gameState.playerHand.length).to.equal(2);
+        });
     });
-
-    it('should have the default state', async () => {
-        await instance.get('/new-game');
-        const newGameState = {
-            "isRoundInProgress": false,
-            "playerChips": 10, 
-            "playerHandValue": 0, 
-            "dealerHandValue": 0,
-            "dealerHand": [],
-            "playerHand": [],
-            "message": {text: "", color: ""}
-        }
-
-        expect(game.state).to.deep.equal(newGameState); 
-    });
-
-})
+});
