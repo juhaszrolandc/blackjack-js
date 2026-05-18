@@ -1,5 +1,10 @@
+*.js
+*.d.ts.map
+*.d.ts
+*.js.map
+
 blackjack/classes_build/
 netflix/dist
-*.js
+.nyc_output
 */node_modules
 */**/coverage_report
