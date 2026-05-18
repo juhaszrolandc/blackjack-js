@@ -41,7 +41,10 @@ function getPetData(){
 function getPets(req: Request, res: Response) {
   const type = String(req.query.type);
   const limit = Number(req.query.limit);
-  const result = pets.filter(pet => pet.type === type).slice(0, limit);
+  const filteredPetsByType = pets.filter(pet => pet.type === type).slice(0, limit);
+  const tags = Array(req.query.tags);
+  let result = Array();
+  
   res.json(result);
 }
 
@@ -59,7 +62,7 @@ function findPetById(req: Request, res: Response) {
 
 function deletePet(req: Request, res: Response) {
   const id: number = Number(req.params.id);
-  pets = pets.filter(pet => pet.id !== id)
+  pets = pets.filter(pet => pet.id !== id);
   res.status(204).end();
 }
 

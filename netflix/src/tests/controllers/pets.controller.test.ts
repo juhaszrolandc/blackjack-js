@@ -12,7 +12,7 @@ type Pet = {
 }
 
 /* 
-   A pets.controller.ts-ben lévő pets tömböt kellene stubbolni ezekhez a tesztekhez.
+   A pets.controller.ts-ben lévő pets tömböt kellene mockolni ezekhez a tesztekhez.
    De nem tudom hogyan lehet ezt itt "szépen csinálni".
 */
 describe('pets controller', () => {
@@ -119,19 +119,19 @@ describe('pets controller', () => {
             id: 1,
             name: 'buzz1',
             type: 'dog',
-            tags: ['purrfect'],
+            tags: ['sweet'],
          },
          {
             id: 2,
             name: 'buzz2',
             type: 'dog',
-            tags: ['purrfect'],
+            tags: ['cute'],
          },
          {
             id: 3,
             name: 'buzz3',
             type: 'dog',
-            tags: ['purrfect'],
+            tags: ['sweet', 'cute'],
          }
     ];
 
@@ -163,6 +163,16 @@ describe('pets controller', () => {
       const countOfDogs: number = response.data.filter((pet: Pet) => pet.type === "dog").length;
 
       expect(countOfDogs).to.be.lessThanOrEqual(limit);
+    });
+
+    it('should return animals which has sweet tag', async () => {
+      const type: string = "dog";
+      const limit: number = 3;
+      const tags: string[] = ["sweet"];
+      const response: any = await instance.get(`/pets?type=${type}&limit=${limit}&tags=${tags}`);
+      const dogs: string[] = response.data.filter((pet: Pet) => pet.tags.includes("sweet"));
+
+      expect(response.data).to.deep.equal(dogs);
     });
 
   });
