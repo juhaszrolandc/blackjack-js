@@ -7,32 +7,8 @@ interface Pet {
   tags: string[];
 }
 
-let pets: Pet[] = [
-  {
-    id: 1,
-    name: 'sparky',
-    type: 'dog',
-    tags: ['sweet'],
-  },
-  {
-    id: 2,
-    name: 'buzz',
-    type: 'cat',
-    tags: ['purrfect'],
-  },
-  {
-    id: 3,
-    name: 'max',
-    type: 'dog',
-    tags: [],
-  },
-];
-let creationId: number = 4;
-
-function rewritePetData(newPets: Pet[]){
-  pets = newPets
-  creationId = newPets.length+1;
-}
+let pets: Pet[] = [];
+let creationId: number = 1;
 
 function getPets(req: Request, res: Response) {
   const type = String(req.query.type);
@@ -67,7 +43,6 @@ function deletePet(req: Request, res: Response) {
 }
 
 export {
-  rewritePetData,
   getPets,
   createPet,
   findPetById,

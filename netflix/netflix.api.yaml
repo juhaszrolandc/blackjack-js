@@ -21,7 +21,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: "#/components/schemas/UsernameAndPassword"
+              $ref: "#/components/schemas/User"
 
       responses:
         "200":
@@ -58,7 +58,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: "#/components/schemas/UsernameAndPassword"
+              $ref: "#/components/schemas/User"
 
       responses:
         "200":
@@ -225,9 +225,7 @@ paths:
           content:
             application/json:
               schema:
-                oneOf:
-                  - $ref: "#/components/schemas/Movie"
-                  - $ref: "#/components/schemas/MovieArray"
+                $ref: "#/components/schemas/MovieArray"
 
         "404":
           description: Not found
@@ -282,7 +280,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: "#/components/schemas/newMovie"
+              $ref: "#/components/schemas/Movie"
 
       responses:
           "200":
@@ -521,7 +519,7 @@ paths:
 
 components:
   schemas:
-    UsernameAndPassword:
+    User:
       type: object
       required:
         - username
@@ -536,40 +534,6 @@ components:
       example:
         username: roland
         password: password123
-
-    newMovie:
-      type: object
-      properties:
-        title:
-          type: string
-        description:
-          type: string
-        directed-by:
-          type: string
-        actors:
-          type: array
-          items:
-            type: string
-        categories:
-          type: array
-          items:
-            type: string
-        type:
-          type: string
-          enum:
-            - TV Show
-            - Movie
-      required:
-            - title
-            - description
-            - type
-      example:
-        title: "Transformers"
-        description: "Transformers (2007) is a high-octane science fiction action film directed by Michael Bay, focusing on a war between two factions of alien robots—the heroic Autobots and evil Decepticons—who arrive on Earth searching for the AllSpark, a powerful artifact."
-        directed-by: Michael Bay
-        actors: [Shia LaBeouf, Megan Fox]
-        categories: [sci-fi, action]
-        type: Movie
 
     Movie:
       type: object
@@ -595,6 +559,8 @@ components:
             - Movie
         id:
           type: integer
+          readOnly: true
+
       required:
             - id
             - title
@@ -613,35 +579,4 @@ components:
     MovieArray:
       type: array
       items:
-            type: object
-            properties:
-              title:
-                type: string
-              description:
-                type: string
-              directed-by:
-                type: string
-              actors:
-                type: array
-                items:
-                  type: string
-              categories:
-                type: array
-                items:
-                  type: string
-              type:
-                type: string
-                enum:
-                  - TV Show
-                  - Movie
-              id:
-                type: integer
-
-            example:
-              title: "Transformers"
-              description: "Transformers (2007) is a high-octane science fiction action film directed by Michael Bay, focusing on a war between two factions of alien robots—the heroic Autobots and evil Decepticons—who arrive on Earth searching for the AllSpark, a powerful artifact."
-              directed-by: Michael Bay
-              actors: [Shia LaBeouf, Megan Fox]
-              categories: [sci-fi, action]
-              type: Movie
-              id: 3
+        $ref: "#/components/schemas/Movie"
