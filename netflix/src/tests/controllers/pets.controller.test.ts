@@ -69,9 +69,10 @@ describe('Pets Controller', () => {
 
   describe('GET /pets', () => {
     it('should return limited number of animals filtered by type', async () => {
-      await instance.post('/pets', { name: 'dog1', type: 'dog', tags: [] });
-      await instance.post('/pets', { name: 'dog2', type: 'dog', tags: [] });
-      await instance.post('/pets', { name: 'dog3', type: 'dog', tags: [] });
+
+      for(let i = 1; i<4; i++){
+        await instance.post('/pets', { name: `dog${i}`, type: 'dog', tags: [] });
+      }
 
       const type = 'dog';
       const limit = 2;
