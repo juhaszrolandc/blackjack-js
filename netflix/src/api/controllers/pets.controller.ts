@@ -38,6 +38,12 @@ function findPetById(req: Request, res: Response) {
 
 function deletePet(req: Request, res: Response) {
   const id: number = Number(req.params.id);
+  const pet = pets.find(pet => pet.id === id);
+
+  if(!pet){
+    res.status(404).end();
+  }
+
   pets = pets.filter(pet => pet.id !== id);
   res.status(204).end();
 }

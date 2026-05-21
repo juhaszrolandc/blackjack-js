@@ -74,11 +74,11 @@ describe('Blackjack API', async () => {
             expect(gameState.message.text).to.match(/blackjack/i);
         });
 
-        it('should be Bust', async () => {
+        it('should bust when player hand value is over 21', async () => {
             const deckMock = sinon.mock(game.deck);
             deckMock.expects('drawCard')
-            .atLeast(4)
-            .returns(new Card('diamonds', 'ten', 10))
+            .exactly(4)
+            .returns(new Card('diamonds', 'ten', 10));
             
             await instance.get('/new-game');
             await instance.get('/new-round');
@@ -98,7 +98,7 @@ describe('Blackjack API', async () => {
     });
 
     describe('GET /stand', () => {
-        it('should be settle the round', async () => {
+        it('should settle the round', async () => {
             await instance.get('/new-game');
             await instance.get('/new-round');
             await instance.get('/hit');

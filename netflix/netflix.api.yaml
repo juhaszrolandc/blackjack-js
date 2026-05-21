@@ -9,11 +9,22 @@ info:
     url: https://www.apache.org/licenses/LICENSE-2.0.html
 servers:
   - url: /v1
+tags:
+  - name: public
+    description: Public operations (authentication is not required)
+
+  - name: user
+    description: User operations (user authentication is required)
+
+  - name: admin
+    description: Admin operations (admin authentication is required)
 
 paths:
   /user:
     post:
       description: Create a new user
+      tags:
+        - public
       operationId: createUser
       x-eov-operation-handler: api/controllers/netflix.controller
       requestBody:
@@ -24,7 +35,7 @@ paths:
               $ref: "#/components/schemas/User"
 
       responses:
-        "200":
+        "201":
           description: OK
           content:
             application/json:
@@ -51,6 +62,8 @@ paths:
   /user/login:
     post:
       description: User login
+      tags:
+        - public
       operationId: login
       x-eov-operation-handler: api/controllers/netflix.controller
       requestBody:
@@ -101,6 +114,8 @@ paths:
   /user/logout:
     post:
       description: User logout
+      tags:
+        - user
       operationId: logout
       x-eov-operation-handler: api/controllers/netflix.controller
       parameters:
@@ -140,6 +155,8 @@ paths:
   /queue:
     get:
       description: List movies queue rented by the user
+      tags:
+        - user
       operationId: userMovies
       x-eov-operation-handler: api/controllers/netflix.controller
       parameters:
@@ -191,9 +208,11 @@ paths:
                 example:
                   message: Unexpected error
       
-  /movie:
+  /movies:
     get:
       description: Get movie by title or id
+      tags:
+        - user
       operationId: findMovie
       x-eov-operation-handler: api/controllers/netflix.controller
       parameters:
@@ -265,6 +284,8 @@ paths:
 
     post:
       description: Create movie
+      tags:
+        - admin
       operationId: createMovie
       x-eov-operation-handler: api/controllers/netflix.controller
       parameters:
@@ -316,6 +337,8 @@ paths:
 
     delete:
       description: Delete movie
+      tags:
+        - admin
       operationId: deleteMovie
       x-eov-operation-handler: api/controllers/netflix.controller
       parameters:
@@ -335,7 +358,7 @@ paths:
             type: string
 
       responses:
-        "200":
+        "204":
           description: OK
           content:
             application/json:
@@ -385,6 +408,8 @@ paths:
 
     patch:
       description: Update movie
+      tags:
+        - admin
       operationId: updateMovie
       x-eov-operation-handler: api/controllers/netflix.controller
       parameters:
@@ -447,10 +472,12 @@ paths:
                 example:
                   message: Unexpected error
 
-  /movie/{id}/rent:
+  /movies/{movieId}/rent:
     get:
       description: Rent a movie by ID
-      operationId: rentMovieByID
+      tags:
+        - user
+      operationId: rentMovieById
       x-eov-operation-handler: api/controllers/netflix.controller
       parameters:
         - in: header
@@ -462,7 +489,7 @@ paths:
             format: uuid
 
         - in: path
-          name: id
+          name: movieId
           description: The ID of the movie.
           required: true
           schema:
