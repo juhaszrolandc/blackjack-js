@@ -7,7 +7,7 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 
 const server: express.Application = express();
-const game: Game = new Game();
+export const game: Game = new Game();
 
 server.listen(8000);
 server.set("view engine", "ejs");
