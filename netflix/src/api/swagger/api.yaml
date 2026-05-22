@@ -358,7 +358,7 @@ paths:
             type: string
 
       responses:
-        "204":
+        "200":
           description: OK
           content:
             application/json:
@@ -420,6 +420,13 @@ paths:
           schema:
             type: string
             format: uuid
+
+        - in: query
+          name: id
+          description: The ID of the movie.
+          required: true
+          schema:
+            type: string
 
       requestBody:
         required: true

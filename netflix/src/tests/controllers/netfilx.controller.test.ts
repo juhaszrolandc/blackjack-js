@@ -129,17 +129,8 @@ describe('Netfilx controller', function () {
           "X-Admin-API-key": "123e4567-e89b-12d3-a456-426614174000",
         }
       };
-      const movie = {
-        "title": "Transformers",
-        "description": "Transformers (2007) is a high-octane science fiction action film.",
-        "directed-by": "Michael Bay",
-        "actors": ["Shia LaBeouf", "Megan Fox"],
-        "categories": ["sci-fi", "action"],
-        "type": "Movie",
-        "id": 3
-      };
-      const response = await instance.delete('/movies', config);
-      expect(response.status).to.equal(204);
+      const response = await instance.delete('/movies?id=3', config);
+      expect(response.status).to.equal(200);
       expect(response.data).to.deep.equal({
         "message": "You deleted the movie successfully."
       });
@@ -153,8 +144,17 @@ describe('Netfilx controller', function () {
           "X-Admin-API-key": "123e4567-e89b-12d3-a456-426614174000",
         }
       };
-      const response = await instance.patch('/movies?id=3', config);
+      const movie = {
+        "title": "Transformers",
+        "description": "Transformers (2007) is a high-octane science fiction action film.",
+        "directed-by": "Michael Bay",
+        "actors": ["Shia LaBeouf", "Megan Fox"],
+        "categories": ["sci-fi", "action"],
+        "type": "Movie"
+      };
+      const response = await instance.patch('/movies?id=3', movie, config);
       expect(response.status).to.equal(200);
+      console.log(response.data)
       expect(response.data).to.deep.equal({
         "title": "Transformers",
         "description": "Transformers (2007) is a high-octane science fiction action film.",
@@ -174,7 +174,7 @@ describe('Netfilx controller', function () {
           "X-Session-ID": "123e4567-e89b-12d3-a456-426614174000"
         }
       };
-      const response = await instance.patch('/movies/3/rent', config);
+      const response = await instance.get('/movies/3/rent', config);
       expect(response.status).to.equal(200);
       expect(response.data).to.deep.equal({
         "message": "You rented the movie successfully."
