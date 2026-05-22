@@ -1,13 +1,14 @@
+import { use } from "chai";
 import { UUID, randomUUID } from "node:crypto";
 
-type Session = {
+export type Session = {
     "userId": number,
     "sessinoId": UUID,
     "expiryDate": Date
 };
 
-class SessionService {
-    constructor(public sessionDatabase: Session[]){}
+export class SessionService {
+    constructor(private sessionDatabase: Session[] = new Array()){}
 
     async get(userId: number){
         const userSession: Session | undefined = this.sessionDatabase.find(session => session.userId === userId);
@@ -21,11 +22,7 @@ class SessionService {
     }
 
     async new(userId: number){
-        const userSessionIndex: number = this.sessionDatabase.findIndex(session => session.userId === userId);
-
-        if(userSessionIndex !== -1){
-            delete this.sessionDatabase[userSessionIndex];
-        }
+        this.sessionDatabase = this.sessionDatabase.filter(session => session.userId !== userId);
 
         const twelveHour: number = 12 * 60 * 60 * 1000;
         const currentTime: number = new Date().getTime();
@@ -37,6 +34,8 @@ class SessionService {
         }
 
         this.sessionDatabase.push(userSession);
+
+        return userSession;
     }
 
     async delete(userId: number){
@@ -46,6 +45,14 @@ class SessionService {
             throw new Error("Session does'nt exist!");
         }
 
-        delete this.sessionDatabase[sessionIndex];
+        this.sessionDatabase = this.sessionDatabase.filter(session => session.userId !== userId);
+    }
+
+    async numberOfRow(){
+        return this.sessionDatabase.length;
+    }
+
+    async clearDatabase(){
+        return this.sessionDatabase = new Array();
     }
 }

@@ -19,7 +19,6 @@ function logout(req: Request, res: Response){
 }
 
 function queue(req: Request, res: Response){
-  console.log("queue");
   res.status(200).json([
       {
         "title": "Transformers",

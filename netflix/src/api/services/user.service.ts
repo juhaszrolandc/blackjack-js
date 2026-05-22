@@ -13,12 +13,27 @@ type User = {
 class UserService {
     constructor(private userDatabase: User[]){}
 
-    async get(userId: number){
+    async getById(userId: number){
         const user: User | undefined = this.userDatabase.find(user => user.userId === userId);
         return user ? user : null;
     }
 
+    async getByUsernameAndPassword(username: string, password: string){
+        const user: User | undefined = this.userDatabase.find(user => {
+            user.username === username,
+            user.password === password
+        });
+
+        return user ? user : null;
+    }
+
     async insert(registrationDetalils: UserRegistrationDetalils){
+        const userIndex = this.userDatabase.findIndex(user => user.username === registrationDetalils.username);
+
+        if(userIndex !== -1){
+            throw new Error("Username is exist!");
+        }
+
         const userId: number = this.userDatabase.length;
         const user: User = {
             ...registrationDetalils,
@@ -36,11 +51,20 @@ class UserService {
 
     async insertQueue(userId: number, movieId: number){
         const userIndex = this.userDatabase.findIndex(user => user.userId === userId);
-        if(userIndex != -1){
-            const user = this.userDatabase[userIndex];
-            user.queue.push(movieId);
-        } else {
+        
+        if(userIndex === -1){
             throw new Error("User session does'nt exist!");
         }
+
+        const user = this.userDatabase[userIndex];
+        user.queue.push(movieId);
+    }
+
+    async numberOfRow(){
+        return this.userDatabase.length;
+    }
+
+    async clearDatabase(){
+        return this.userDatabase = new Array();
     }
 }

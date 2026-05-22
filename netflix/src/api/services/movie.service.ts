@@ -45,12 +45,14 @@ class MovieService {
     }
 
     async delete(movieId: number){
-        const movieIndex: number = this.movieDatabase.findIndex(movie => movie.id === movieId);
+        this.movieDatabase.filter(movie => movie.id !== movieId);
+    }
 
-        if(movieIndex === -1){
-            throw new Error("Movie does'nt exist!");   
-        }
+    async numberOfRow(){
+        return this.movieDatabase.length;
+    }
 
-        delete this.movieDatabase[movieIndex];
+    async clearDatabase(){
+        return this.movieDatabase = new Array();
     }
 }

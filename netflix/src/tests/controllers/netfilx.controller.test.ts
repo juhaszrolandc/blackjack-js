@@ -154,7 +154,6 @@ describe('Netfilx controller', function () {
       };
       const response = await instance.patch('/movies?id=3', movie, config);
       expect(response.status).to.equal(200);
-      console.log(response.data)
       expect(response.data).to.deep.equal({
         "title": "Transformers",
         "description": "Transformers (2007) is a high-octane science fiction action film.",

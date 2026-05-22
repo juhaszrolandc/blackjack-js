@@ -2,7 +2,7 @@ import { UUID, randomUUID } from "node:crypto";
 
 type AdminKey = UUID;
 
-class AdminKeyService {
+export class AdminKeyService {
     constructor(private key: AdminKey | null = null){}
 
     async get(){
@@ -11,9 +11,10 @@ class AdminKeyService {
 
     async generateNew(){
         this.key = randomUUID();
+        return this.key;
     }
 
-    async delete(userId: number){
+    async delete(){
         this.key = null;
     }
 }
