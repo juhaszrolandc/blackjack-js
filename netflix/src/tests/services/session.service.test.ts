@@ -13,15 +13,13 @@ describe('User session service', function () {
 
         const firstSession: Session = await sessions.new(userId);
         const firstNumberOfRow: number = await sessions.numberOfRow();
-
         const secondSession: Session = await sessions.new(userId);
         const secondNumberOfRow: number = await sessions.numberOfRow();
         const retrievedSession: Session | null = await sessions.get(userId);
-
         await sessions.delete(userId);
         const sessionAfterDelete: Session | null = await sessions.get(userId);
         
-        
+
         expect(firstSession).is.not.null;
         expect(secondSession).is.not.null;
         expect(sessionAfterDelete).is.null;
@@ -30,7 +28,8 @@ describe('User session service', function () {
         expect(secondSession.expiryDate).is.greaterThan(currentDate);
 
         expect(firstNumberOfRow).is.equal(1);
-        expect(firstNumberOfRow).is.equal(secondNumberOfRow);
+        expect(secondNumberOfRow).is.equal(1);
+
         expect(firstSession.sessinoId).is.not.equal(secondSession.sessinoId);
         expect(retrievedSession).is.deep.equal(secondSession);
     });

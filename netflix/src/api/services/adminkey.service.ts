@@ -1,6 +1,6 @@
 import { UUID, randomUUID } from "node:crypto";
 
-type AdminKey = UUID;
+export type AdminKey = UUID;
 
 export class AdminKeyService {
     constructor(private key: AdminKey | null = null){}

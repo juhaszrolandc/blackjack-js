@@ -1,27 +1,21 @@
-type UserRegistrationDetalils = {
+export type UserRegistrationDetalils = {
     "username": string,
     "password": string
 }
 
-type User = {
+export type User = {
     "username": string,
     "password": string
     "queue": number[],
     "userId": number,
 };
 
-class UserService {
-    constructor(private userDatabase: User[]){}
-
-    async getById(userId: number){
-        const user: User | undefined = this.userDatabase.find(user => user.userId === userId);
-        return user ? user : null;
-    }
+export class UserService {
+    constructor(private userDatabase: User[] = new Array()){}
 
     async getByUsernameAndPassword(username: string, password: string){
         const user: User | undefined = this.userDatabase.find(user => {
-            user.username === username,
-            user.password === password
+            return user.username === username && user.password === password
         });
 
         return user ? user : null;

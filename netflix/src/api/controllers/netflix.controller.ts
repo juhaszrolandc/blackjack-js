@@ -1,4 +1,8 @@
 import { Request, Response } from 'express';
+import { SessionService, Session } from '../services/session.service';
+import { UserService, User } from '../services/user.service';
+import { MovieService, Movie, MovieWithoutId } from '../services/movie.service';
+import { AdminKeyService, AdminKey } from '../services/adminKey.service';
 
 function createUser(req: Request, res: Response) {
   res.status(201).json({

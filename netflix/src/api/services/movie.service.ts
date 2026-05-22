@@ -1,4 +1,4 @@
-type MovieWithoutId = {
+export type MovieWithoutId = {
     "title": string,
     "description": string,
     "directedBy": string,
@@ -7,9 +7,9 @@ type MovieWithoutId = {
     "type": "TV Show" | "Movie",
 };
 
-type Movie = MovieWithoutId & {"id": number};
+export type Movie = MovieWithoutId & {"id": number};
 
-class MovieService {
+export class MovieService {
     constructor(private movieDatabase: Movie[]){}
 
     async getMovieById(movieId: number){
