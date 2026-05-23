@@ -81,11 +81,11 @@ paths:
               schema:
                 type: object
                 properties:
-                  session-id:
+                  sessionId:
                     type: integer
                     format: uuid
                 example:
-                  session-id: 123e4567-e89b-12d3-a456-426614174000
+                  sessionId: 123e4567-e89b-12d3-a456-426614174000
 
         "400":
           description: Invalid username or password

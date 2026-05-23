@@ -16,7 +16,7 @@ describe('User session service', function () {
         const secondSession: Session = await sessions.new(userId);
         const secondNumberOfRow: number = await sessions.numberOfRow();
         const retrievedSession: Session | null = await sessions.get(userId);
-        await sessions.delete(userId);
+        await sessions.delete(secondSession.sessinoId);
         const sessionAfterDelete: Session | null = await sessions.get(userId);
         
 

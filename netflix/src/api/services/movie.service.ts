@@ -10,7 +10,7 @@ export type MovieWithoutId = {
 export type Movie = MovieWithoutId & {"id": number};
 
 export class MovieService {
-    constructor(private movieDatabase: Movie[]){}
+    constructor(private movieDatabase: Movie[] = new Array()){}
 
     async getMovieById(movieId: number){
         const movie: Movie | undefined = this.movieDatabase.find(movie => movie.id === movieId);
@@ -29,6 +29,7 @@ export class MovieService {
             "id": movieId
         }
         this.movieDatabase.push(movie);
+        return movie;
     }
 
     async update(movieId: number, changedMovie: MovieWithoutId){
@@ -45,7 +46,7 @@ export class MovieService {
     }
 
     async delete(movieId: number){
-        this.movieDatabase.filter(movie => movie.id !== movieId);
+        this.movieDatabase = this.movieDatabase.filter(movie => movie.id !== movieId);
     }
 
     async numberOfRow(){

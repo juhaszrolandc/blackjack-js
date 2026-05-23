@@ -38,14 +38,14 @@ export class SessionService {
         return userSession;
     }
 
-    async delete(userId: number){
-        const sessionIndex: number = this.sessionDatabase.findIndex(session => session.userId === userId);
+    async delete(sessinoId: UUID){
+        const sessionIndex: number = this.sessionDatabase.findIndex(session => session.sessinoId === sessinoId);
 
         if(sessionIndex === -1){
             throw new Error("Session does'nt exist!");
         }
 
-        this.sessionDatabase = this.sessionDatabase.filter(session => session.userId !== userId);
+        this.sessionDatabase = this.sessionDatabase.filter(session => session.sessinoId !== sessinoId);
     }
 
     async numberOfRow(){

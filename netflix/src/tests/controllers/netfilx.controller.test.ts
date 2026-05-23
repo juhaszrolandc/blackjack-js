@@ -1,12 +1,15 @@
 import { expect } from 'chai';
 import axios from 'axios';
 import '../../app';
+import { UUID } from 'node:crypto';
 
 describe('Netfilx controller', function () {
   const instance = axios.create({
     baseURL: 'http://localhost:3000/v1',
     validateStatus: undefined
   });
+
+  let sessionId: UUID | null = null;
 
   describe('POST /user', function () {
     it('should be available', async () => {
@@ -28,10 +31,11 @@ describe('Netfilx controller', function () {
         "password": "123"
       }
       const response = await instance.post('/user/login', body);
+      sessionId = response.data.sessionId;
+
       expect(response.status).to.equal(200);
-      expect(response.data).to.deep.equal({
-        "session-id": "123e4567-e89b-12d3-a456-426614174000"
-      });
+      expect(response.data.sessionId).is.not.null;
+      expect(response.data.sessionId).is.not.undefined;
     });
   });
   
@@ -39,9 +43,10 @@ describe('Netfilx controller', function () {
     it('should be available', async () => {
       const config = {
         "headers": {
-          "X-Session-ID": "123e4567-e89b-12d3-a456-426614174000",
+          "X-Session-ID": sessionId,
         }
       };
+
       const response = await instance.post('/user/logout', {}, config);
       expect(response.status).to.equal(200);
       expect(response.data).to.deep.equal({
