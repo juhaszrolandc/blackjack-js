@@ -7,7 +7,7 @@ describe('User Service', function () {
     const users: UserService = new UserService();
 
     describe('getByUsernameAndPassword', () => {
-        it('should return user object, if user exists', async () => {
+        it('should return user object', async () => {
             const user: User = {
                 "username": "Roland",
                 "password": "passwd",
@@ -23,7 +23,7 @@ describe('User Service', function () {
             databaseFindStub.restore();
         });
 
-        it('should return null, if user doesn\'t exist', async () => {
+        it('should return null (user does not exist)', async () => {
             const databaseFindStub = sinon.stub(users.userDatabase, "find").returns(undefined);
             const retrievedUser = await users.getByUsernameAndPassword("Roland","passwd");
 
@@ -34,7 +34,7 @@ describe('User Service', function () {
     });
 
     describe('getById', () => {
-        it('should return user object, if user exists', async () => {
+        it('should return user object', async () => {
             const user: User = {
                 "username": "Roland",
                 "password": "passwd",
@@ -50,7 +50,7 @@ describe('User Service', function () {
             databaseFindStub.restore();
         });
 
-        it('should return null, if user doesn\'t exist', async () => {
+        it('should return null (user does not exist)', async () => {
             const databaseFindStub = sinon.stub(users.userDatabase, "find").returns(undefined);
             const retrievedUser = await users.getById(1);
 
@@ -82,7 +82,7 @@ describe('User Service', function () {
             expect(hasThrown, "The code should have thrown an error but it did not!").to.be.true;
         });
 
-        it('should creat a new record, if username dosn\'t exist', async () => {
+        it('should creat a new record (username does not exist)', async () => {
             const databaseFindIndexStub = sinon.stub(users.userDatabase, "findIndex").returns(-1);
             const databaseMock = sinon.mock(users.userDatabase);
 
@@ -105,7 +105,7 @@ describe('User Service', function () {
     });
 
     describe('getQueue', () => {
-        it('should return queue array, if user exists with the id', async () => {
+        it('should return queue array', async () => {
             const user: User = {
                 "username": "Roland",
                 "password": "passwd",
@@ -120,7 +120,7 @@ describe('User Service', function () {
             databaseFindStub.restore();
         });
 
-        it('should return null, if user doesn\'t exist with the id', async () => {
+        it('should return null (user does not exist)', async () => {
             const databaseFindStub = sinon.stub(users.userDatabase, "find").returns(undefined);
             const queue = await users.getQueue(1);
 
@@ -145,7 +145,7 @@ describe('User Service', function () {
             }
         });
 
-        it('should add movie id to queue, if username exists', async () => {
+        it('should add movie id to queue (username exists)', async () => {
             const databaseFindIndexStub = sinon.stub(users.userDatabase, "findIndex").returns(0);
             const databaseMock = sinon.mock(users.userDatabase);
 

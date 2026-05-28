@@ -9,7 +9,7 @@ const sessions = new SessionService();
 
 describe('Session Service', () => {
     describe('getByUserId', () => {
-        it('should return null, if the user session is expired', async () => {
+        it('should return null (the user session is expired)', async () => {
             const sessionDatabaseMock = sinon.mock(sessions.sessionDatabase);
             const twelveHour: number = 12 * 60 * 60 * 1000;
             const currentTime: number = new Date().getTime();
@@ -29,7 +29,7 @@ describe('Session Service', () => {
             sessionDatabaseMock.restore();
         });
 
-        it('should return null, if the user session doesn\'t exsist', async () => {
+        it('should return null (the user session does not exsist)', async () => {
             const sessionDatabaseMock = sinon.mock(sessions.sessionDatabase);
             sessionDatabaseMock.expects('find').returns(undefined);
 
@@ -62,7 +62,7 @@ describe('Session Service', () => {
     });
 
     describe('getBySessionId', () => {
-        it('should return null, if the user session is expired', async () => {
+        it('should return null (the user session is expired)', async () => {
             const sessionDatabaseMock = sinon.mock(sessions.sessionDatabase);
             const twelveHour: number = 12 * 60 * 60 * 1000;
             const currentTime: number = new Date().getTime();
@@ -82,7 +82,7 @@ describe('Session Service', () => {
             sessionDatabaseMock.restore();
         });
 
-        it('should return null, if the user session doesn\'t exsist', async () => {
+        it('should return null (the user session does not exsist)', async () => {
             const sessionDatabaseMock = sinon.mock(sessions.sessionDatabase);
             sessionDatabaseMock.expects('find').returns(undefined);
 
