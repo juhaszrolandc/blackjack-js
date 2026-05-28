@@ -47,6 +47,18 @@ paths:
                 example:
                   message: Account has been successfully created
 
+        "409":
+          description: Conflict
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                example:
+                  message: Username already exists! Please choose a different username.
+
         "500":
           description: Unexpected error
           content:
@@ -323,6 +335,18 @@ paths:
                   example:
                     message: Invalid admin key!
 
+          "409":
+            description: Conflict
+            content:
+              application/json:
+                schema:
+                  type: object
+                  properties:
+                    message:
+                      type: string
+                  example:
+                    message: A movie with this title already exists!
+
           "500":
             description: Unexpected error
             content:
@@ -479,12 +503,12 @@ paths:
                 example:
                   message: Unexpected error
 
-  /movies/{movieId}/rent:
+  /movies/{movieId}/buy:
     get:
-      description: Rent a movie by ID
+      description: Buy a movie by ID
       tags:
         - user
-      operationId: rentMovieById
+      operationId: buyMovieById
       x-eov-operation-handler: api/controllers/netflix.controller
       parameters:
         - in: header
@@ -513,7 +537,7 @@ paths:
                   message:
                     type: string
                 example:
-                  message: You rented the movie successfully.
+                  message: You buy the movie successfully.
 
         "404":
           description: Not found

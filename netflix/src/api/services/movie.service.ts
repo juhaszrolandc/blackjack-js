@@ -10,7 +10,7 @@ export type MovieWithoutId = {
 export type Movie = MovieWithoutId & {"id": number};
 
 export class MovieService {
-    constructor(private movieDatabase: Movie[] = new Array()){}
+    constructor(public movieDatabase: Movie[] = new Array()){}
 
     async getMovieById(movieId: number){
         const movie: Movie | undefined = this.movieDatabase.find(movie => movie.id === movieId);
@@ -18,11 +18,21 @@ export class MovieService {
     }
 
     async getMovieByTitle(movieTitle: string){
-        const movie: Movie | undefined = this.movieDatabase.find(movie => movie.title === movieTitle);
+        const movie: Movie | undefined = this.movieDatabase.find(
+            movie => movie.title.toLowerCase() === movieTitle.toLowerCase()
+        );
         return movie ? movie : null;
     }
 
     async insert(newMovie: MovieWithoutId){
+        const movieIndex: number = this.movieDatabase.findIndex(
+            movie => movie.title.toLowerCase() === newMovie.title.toLowerCase()
+        );
+
+        if( movieIndex !== -1 ){
+            throw Error('A movie with this title already exists!');
+        }
+
         const movieId = this.movieDatabase.length;
         const movie: Movie = {
             ...newMovie,
@@ -36,13 +46,15 @@ export class MovieService {
         const movieIndex: number = this.movieDatabase.findIndex(movie => movie.id === movieId);
 
         if(movieIndex === -1){
-            throw new Error("Movie does'nt exist!");
+            throw new Error("The movie with this ID does not exist!");
         }
 
         this.movieDatabase[movieIndex] = {
             ...changedMovie,
             "id": this.movieDatabase[movieIndex].id
         }
+
+        return this.movieDatabase[movieIndex];
     }
 
     async delete(movieId: number){

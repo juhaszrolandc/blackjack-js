@@ -1,17 +1,28 @@
 import { use } from "chai";
-import { UUID, randomUUID } from "node:crypto";
+import crypto from 'crypto';
 
 export type Session = {
     "userId": number,
-    "sessinoId": UUID,
+    "sessionId": crypto.UUID,
     "expiryDate": Date
 };
 
 export class SessionService {
-    constructor(private sessionDatabase: Session[] = new Array()){}
+    constructor(public sessionDatabase: Session[] = new Array()){}
 
-    async get(userId: number){
+    async getByUserId(userId: number){
         const userSession: Session | undefined = this.sessionDatabase.find(session => session.userId === userId);
+        const currentDate = new Date();
+
+        if(!userSession || userSession.expiryDate < currentDate){
+            return null;
+        }
+
+        return userSession;
+    }
+
+    async getBySessionId(sessionId: crypto.UUID){
+        const userSession: Session | undefined = this.sessionDatabase.find(session => session.sessionId === sessionId);
         const currentDate = new Date();
 
         if(!userSession || userSession.expiryDate < currentDate){
@@ -24,28 +35,26 @@ export class SessionService {
     async new(userId: number){
         this.sessionDatabase = this.sessionDatabase.filter(session => session.userId !== userId);
 
-        const twelveHour: number = 12 * 60 * 60 * 1000;
-        const currentTime: number = new Date().getTime();
-        const expiryDate = new Date(currentTime + twelveHour);
         const userSession: Session = {
-            "sessinoId": randomUUID(),
+            "sessionId": crypto.randomUUID(),
             "userId": userId,
-            "expiryDate": expiryDate
+            "expiryDate": this.generateExpiryDate(12)
         }
-
+        
         this.sessionDatabase.push(userSession);
 
         return userSession;
     }
 
-    async delete(sessinoId: UUID){
-        const sessionIndex: number = this.sessionDatabase.findIndex(session => session.sessinoId === sessinoId);
+    async delete(sessinoId: crypto.UUID){
+        this.sessionDatabase = this.sessionDatabase.filter(session => session.sessionId !== sessinoId);
+    }
 
-        if(sessionIndex === -1){
-            throw new Error("Session does'nt exist!");
-        }
-
-        this.sessionDatabase = this.sessionDatabase.filter(session => session.sessinoId !== sessinoId);
+    generateExpiryDate(hours: number){
+        const hoursInMilisec: number = hours * 60 * 60 * 1000;
+        const currentTimeInMilisec: number = new Date().getTime();
+        const expiryDate = new Date(currentTimeInMilisec + hoursInMilisec);
+        return expiryDate;
     }
 
     async numberOfRow(){
